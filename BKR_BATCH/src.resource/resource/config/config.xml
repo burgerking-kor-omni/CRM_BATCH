@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties version="1.0">
+
+	<!-- application mode : local/dev/staging/real -->
+	<entry key="framework.application.mode">local</entry>
+	
+	<!-- 시스템 기본 encoding -->
+	<entry key="framework.encoding">utf-8</entry>
+	
+	<!-- 
+		System Polling Cycle
+		batch.daemon.polling.cycle = 60 (Unit:second)
+	 -->
+	<entry key="batch.daemon.polling.cycle">60</entry>	
+
+	<!-- ============================================================== -->
+	<!-- Main DataSource 설정 -->
+	<!-- ============================================================== -->
+	<entry key="batch.datasource.main.driverClassName">oracle.jdbc.OracleDriver</entry>	
+	<entry key="batch.datasource.main.url">jdbc:oracle:thin:@an2-bkr-dev-omni-oracle.cqnvymkdmidm.ap-northeast-2.rds.amazonaws.com:1521:OMNIDB</entry>	
+	<entry key="batch.datasource.main.username">enc://3F48F8DC31E9714435B307B4270B1A8E</entry>	
+	<entry key="batch.datasource.main.password">enc://3F48F8DC31E9714435B307B4270B1A8E</entry>	
+	<entry key="batch.datasource.main.validationQuery">select * from dual</entry>	
+
+	<!-- ============================================================== -->
+	<!-- Base DataSource 설정 -->
+	<!-- ============================================================== -->
+	<entry key="batch.datasource.base.driverClassName">oracle.jdbc.OracleDriver</entry>	
+	<entry key="batch.datasource.base.url">jdbc:oracle:thin:@an2-bkr-dev-omni-oracle.cqnvymkdmidm.ap-northeast-2.rds.amazonaws.com:1521:OMNIDB</entry>	
+	<entry key="batch.datasource.base.username">enc://3F48F8DC31E9714435B307B4270B1A8E</entry>	
+	<entry key="batch.datasource.base.password">enc://3F48F8DC31E9714435B307B4270B1A8E</entry>	
+	<entry key="batch.datasource.base.validationQuery">select * from dual</entry>	
+
+	<!-- 
+		메일 발송 설정 관련
+		batch.mail.host = smtp.gmai.com
+		batch.mail.port = 465
+		batch.mail.user.name = 계정
+		batch.mail.password = 비밀번호
+		batch.mail.default.encoding
+	 -->
+	<entry key="batch.mail.host">smtp.office365.com</entry>	
+	<entry key="batch.mail.port">587</entry>	
+	<entry key="batch.mail.user.name">bkr-noreply@bkr.co.kr</entry>	
+	<entry key="batch.mail.password">123qwer@</entry>	
+	<entry key="batch.mail.default.encoding">UTF-8</entry>
+	
+	<!-- 
+	================================================
+	다우연동
+	================================================
+	-->
+	<entry key="dau.dev.domain">https://atomtest.donutbook.co.kr:14076</entry>
+	<entry key="dau.dev.site.id">10000967</entry>
+	<entry key="dau.dev.cooper.id">SC0124</entry>
+	<entry key="dau.dev.cooper.pw">ttju61!@</entry>
+	
+	<entry key="dau.real.domain">https://atom.donutbook.co.kr:443</entry>
+	<entry key="dau.real.site.id">10001578</entry>
+	<entry key="dau.real.cooper.id">SC0790</entry>
+	<entry key="dau.real.cooper.pw">yjye91@@</entry>
+	
+	<entry key="dau.call.ctn">1599-0505</entry>
+	<entry key="dau.issue.cnt">1</entry>
+	<entry key="dau.rcv.ctn">01111111111</entry>
+	<entry key="dau.send.msg">쿠폰요청</entry>
+	<entry key="dau.pay.id">-</entry>
+	<entry key="dau.booking.no">-</entry>
+	<entry key="dau.site.url">http://deliveryapp.co.kr/</entry>
+	<entry key="dau.default.pin.cnt">10</entry>
+	
+</properties>

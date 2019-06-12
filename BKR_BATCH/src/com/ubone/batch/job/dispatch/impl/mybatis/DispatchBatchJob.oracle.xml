@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DispatchJob">
+
+	<!--
+		QueryId     : DispatchJob.selectDispatch
+		Description : 메일 발송 대상 조회
+	 -->
+	<select id="selectDispatch" parameterType="map" resultType="lmap">
+		SELECT TDR.ID_DISPATCH_RUN
+		  FROM CRMADMIN.TBS_DISPATCH_RUN TDR
+		 WHERE TDR.TP_STATUS_DISPATCH IN ('S0', 'F0')
+
+	</select>
+	
+	<!--
+		QueryId     : DispatchJob.selectDispatchList
+		Description : 메일 발송 대상 조회
+	 -->
+	<select id="selectDispatchList" parameterType="map" resultType="lmap">
+		SELECT TDR.ID_DISPATCH_RUN
+		     , TDR.ID_BIZ_KEY
+		     , TDRT.ID_DISPATCH_RUN_TARGET
+		     , TDRT.TP_DISPATCH_TARGET
+		     , TDR.DS_EMAIL_SEND
+		     , TDR.DS_TITLE_DISPATCH
+		     , TDR.DS_DISPATCH
+		     , TDRT.DS_EMAIL_RECV
+		     , TDRT.FG_REFERENCES
+		  FROM CRMADMIN.TBS_DISPATCH_RUN TDR
+		 INNER JOIN CRMADMIN.TBS_DISPATCH_RUN_TARGET TDRT
+		    ON TDR.ID_DISPATCH_RUN = TDRT.ID_DISPATCH_RUN
+		 WHERE TDR.ID_DISPATCH_RUN = #{ID_DISPATCH_RUN}
+		   AND TDRT.SEND_YN = 'N'
+
+	</select>
+	
+	<!--
+		QueryId     : DispatchJob.selectVocFile
+		Description : VOC File 조회
+	 -->
+	<select id="selectVocFile" parameterType="map" resultType="lmap">
+		SELECT ID_VOC
+		     , FILE_KEY
+		     , FILE_NM
+		  FROM CRMADMIN.TBS_VOC_ATTACH
+		 WHERE ID_VOC = #{ID_BIZ_KEY}
+
+	</select>
+	
+	<!-- ************************************************************** -->
+	<!-- ************************************************************** -->
+	<!-- ************************************************************** -->
+	
+	<!--
+		QueryId     : DispatchJob.updateDispatch
+		Description : 통보수정
+	 -->
+	<update id="updateDispatch" parameterType="map">
+		UPDATE CRMADMIN.TBS_DISPATCH_RUN
+		   SET DT_UPT = SYSDATE
+		     , TP_STATUS_DISPATCH = #{TP_STATUS_DISPATCH}
+		     , DS_DISPATCH_RSLT = #{DS_DISPATCH_RSLT}
+		 WHERE ID_DISPATCH_RUN = #{ID_DISPATCH_RUN}
+
+	</update>
+	
+	<!--
+		QueryId     : DispatchJob.updateDispatchTarget
+		Description : 통보수정
+	 -->
+	<update id="updateDispatchTarget" parameterType="map">
+		UPDATE CRMADMIN.TBS_DISPATCH_RUN_TARGET
+		   SET DT_UPT = SYSDATE
+		     , SEND_YN = #{SEND_YN}
+		 WHERE ID_DISPATCH_RUN_TARGET = #{ID_DISPATCH_RUN_TARGET}
+
+	</update>
+
+</mapper>

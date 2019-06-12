@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CouponJob">
+	
+	<!--
+		QueryId     : CouponJob.selectDauCouponFirst
+		Description : 다우 쿠폰핀 요청 대상 조회
+	 -->
+	<select id="selectDauCouponFirst" parameterType="map" resultType="lmap">
+		SELECT CD_COUPON            /* 쿠폰코드 */
+		     , CD_COUPON_OBJ        /* 대상(딜리버리, 킹오더 등) */
+		     , NM_COUPON            /* 쿠폰명 */
+		     , DS_COUPON            /* 쿠폰설명 */
+		     , NO_COUPON_ORDER      /* 쿠폰순서 */
+		     , TP_EXPIRY_DATE       /* 유효기간구분 */
+		     , DT_EXPIRY_START      /* 유효기간시작일 */
+		     , DT_EXPIRY_END        /* 유효기간종료일 */
+		     , FG_PUB               /* 발행여부 */
+		     , CD_GOODS             /* 다우상품코드 */
+		     , NM_GOODS             /* 다우상품명 */
+		     , IMG_GOODS            /* 다우상품이미지 */
+		     , CD_COUPON_TARGET     /* 쿠폰대상(금액,상품) */
+		     , CD_SALE_POLICY       /* 할인정책 */
+		     , VAL_SALE_POLICY      /* 할인금액 */
+		     , VAL_LIMIT_PRICE      /* 최소주문금액 */
+		     , PRODUCT_PK           /* 할인상품 */
+		     , PRODUCT_PK_REAL      /* 실제판매상품 */
+		     , TP_MEMBER            /* 대상회원구분 */
+		     , NO_REQ               /* 다우계약번호 */
+		     , CASE WHEN TP_EXPIRY_DATE = '00' THEN TO_CHAR(DT_EXPIRY_START, 'YYYYMMDD')
+		            ELSE TO_CHAR(SYSDATE, 'YYYYMMDD')
+		        END DT_PIN_START
+		     , CASE WHEN TP_EXPIRY_DATE = '00' THEN TO_CHAR(DT_EXPIRY_END, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '15' THEN TO_CHAR(SYSDATE + 15, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '30' THEN TO_CHAR(SYSDATE + 30, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '60' THEN TO_CHAR(SYSDATE + 60, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '90' THEN TO_CHAR(SYSDATE + 90, 'YYYYMMDD')
+		            ELSE TO_CHAR(DT_EXPIRY_END, 'YYYYMMDD')
+		        END DT_PIN_END
+		  FROM CRMADMIN.TBS_COUPON
+		 WHERE FG_PUB = 'Y'
+		   AND CD_COUPON_OBJ IN ('3', '4')
+		   AND TO_CHAR(DT_EXPIRY_START, 'YYYYMMDD') = TO_CHAR(SYSDATE+1, 'YYYYMMDD')
+
+	</select>
+	
+	<!--
+		QueryId     : CouponJob.selectDauCouponConfig
+		Description : 1시간 배치시 발생 조건 조회
+	 -->
+	<select id="selectDauCouponConfig" parameterType="map" resultType="lmap">
+		SELECT VAL_LIMIT_PIN         /* 남은 쿠폰 개수 */
+		     , VAL_BRING_PIN         /* 가져오기 개수 */
+		     , VAL_BRING_PIN_MANUAL  /* 수동 가져오기 개수 */
+		     , VAL_FIRST_PIN         /* 초기가져오기개수 */
+		  FROM CRMADMIN.TBS_DAUPIN_CONFIG
+		 WHERE FG_USE = 'Y'
+
+	</select>
+	
+	<!--
+		QueryId     : CouponJob.selectDauCouponTagget
+		Description : 다우핀 추가발행 대상 조회
+	 -->
+	<select id="selectDauCouponTagget" parameterType="map" resultType="lmap">
+		SELECT CD_COUPON            /* 쿠폰코드 */
+		     , NO_REQ               /* 다우계약번호 */
+		     , CASE WHEN TP_EXPIRY_DATE = '00' THEN TO_CHAR(DT_EXPIRY_START, 'YYYYMMDD')
+		            ELSE TO_CHAR(SYSDATE, 'YYYYMMDD')
+		        END DT_PIN_START
+		     , CASE WHEN TP_EXPIRY_DATE = '00' THEN TO_CHAR(DT_EXPIRY_END, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '15' THEN TO_CHAR(SYSDATE + 15, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '30' THEN TO_CHAR(SYSDATE + 30, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '60' THEN TO_CHAR(SYSDATE + 60, 'YYYYMMDD')
+		            WHEN TP_EXPIRY_DATE = '90' THEN TO_CHAR(SYSDATE + 90, 'YYYYMMDD')
+		            ELSE TO_CHAR(DT_EXPIRY_END, 'YYYYMMDD')
+		        END DT_PIN_END
+		  FROM CRMADMIN.TBS_COUPON
+		 WHERE FG_PUB = 'Y'
+		   AND CD_COUPON_OBJ IN ('3', '4')
+		   AND DT_EXPIRY_START <![CDATA[<=]]> SYSDATE
+		   AND DT_EXPIRY_END >= SYSDATE 
+		   AND CD_COUPON IN (SELECT TC.CD_COUPON
+		                       FROM CRMADMIN.TBS_COUPON TC
+		                       LEFT OUTER JOIN CRMADMIN.TBS_COUPON_PIN TCP
+		                         ON TC.CD_COUPON = TCP.CD_COUPON
+		                      WHERE TC.FG_PUB = 'Y'
+		                        AND TC.CD_COUPON_OBJ IN ('3', '4')   
+		                        AND TC.DT_EXPIRY_START <![CDATA[<=]]> SYSDATE
+		                        AND TC.DT_EXPIRY_END >= SYSDATE
+		                        AND TCP.DT_PUBLISH IS NULL
+		                      GROUP BY TC.CD_COUPON
+		                      HAVING COUNT(*) <![CDATA[<]]> TO_NUMBER(#{VAL_LIMIT_PIN}))
+
+	</select>
+	
+	<!--
+		QueryId     : CouponJob.selectDauPinReq
+		Description : 실시간 핀 요청 대상 조회
+	 -->
+	<select id="selectDauPinReq" parameterType="map" resultType="lmap">
+		SELECT NO_DAUPIN_REQ    /* 다우핀 발행요청 */
+		     , NO_REQ           /* 쿠폰계약번호 */
+		     , CD_COUPON        /* 쿠폰PK */
+		     , CNT_PIN          /* 발행 요청 핀수 */
+		     , VALID_START      /* 쿠폰유효기간 시작일 */
+		     , VALID_END        /* 쿠폰유효기간 종료일 */
+		     , COOPER_ORDER     /* 제휴처 주문번호 */
+		     , DAUPIN_STATUS    /* 상태(01:발행 신청,02:발행중,99:완료) */
+		  FROM CRMADMIN.TBS_DAUPIN_REQ
+		 WHERE DAUPIN_STATUS = '01'
+
+	</select>
+	
+	<!--
+		QueryId     : CouponJob.selectCoupon
+		Description : 쿠폰 삭제대상 조회
+	 -->
+	<select id="selectCoupon" parameterType="map" resultType="lmap">
+		SELECT CD_COUPON
+		  FROM CRMADMIN.TBS_COUPON
+		 WHERE DT_EXPIRY_END <![CDATA[<=]]> ADD_MONTHS(SYSDATE, -3)
+
+	</select>
+	
+	<!-- ************************************************************** -->
+	<!-- ************************************************************** -->
+	<!-- ************************************************************** -->
+	
+	<!--
+		QueryId     : ApiCoupon.insertCouponPin
+		Description : 쿠폰핀 생성
+	 -->
+	<insert id="insertCouponPin" parameterType="map">
+		INSERT INTO CRMADMIN.TBS_COUPON_PIN
+		(
+			   NO_PIN            /* 핀일련번호 */
+			 , CD_COUPON         /* 쿠폰코드 */
+			 , ID_MEMBER         /* 회원PK */
+			 , STATUS            /* 상태(발급,사용,취소) */
+			 , ID_STORE_USE      /* 사용매장코드 */
+			 , ORDER_NO          /* 사용한주문번호 */
+			 , DT_PUBLISH        /* 발행일자 */
+			 , DT_USE            /* 사용일자 */
+			 , DT_REG            /* 등록일 */
+			 , DT_EXPIRY_START   /* 유효시작일자 */
+			 , DT_EXPIRY_END     /* 유효종료일 */
+			 , PIN_NUM           /* 핀번호 */
+			 , UDID              /* 기기ID */
+			 , AMT_USE           /* 사용금액 */
+			 , AMT_CANCEL        /* 취소금액 */
+		) VALUES (
+		       CRMADMIN.SEQ_TBS_COUPON_PIN.NEXTVAL
+			 , #{CD_COUPON}
+			 , NULL
+			 , 'N'
+			 , NULL
+			 , NULL
+			 , NULL
+			 , NULL
+			 , SYSDATE
+			 , TO_DATE(#{DT_EXPIRY_START} || '000000', 'YYYYMMDDHH24MISS')
+			 , TO_DATE(#{DT_EXPIRY_END} || '235959', 'YYYYMMDDHH24MISS')
+			 , #{PIN_NUM}
+			 , NULL
+			 , 0
+			 , 0
+		)
+	</insert>
+	
+	<!--
+		QueryId     : ApiCoupon.updateDauReq
+		Description : 실시간 다우핀 가져오기 관련 상태 수정
+	 -->
+	<update id="updateDauReq" parameterType="map">
+		UPDATE CRMADMIN.TBS_DAUPIN_REQ
+		   SET DAUPIN_STATUS = #{DAUPIN_STATUS}
+		     , DT_UPT = SYSDATE
+		 WHERE NO_DAUPIN_REQ = #{NO_DAUPIN_REQ}
+
+	</update>
+	
+	<!--
+		QueryId     : ApiCoupon.insertCouponPinHistory
+		Description : 쿠폰핀 백업
+	 -->
+	<insert id="insertCouponPinHistory" parameterType="map">
+		INSERT INTO CRMADMIN.TBS_COUPON_PIN_RECORD
+		SELECT NO_PIN
+		     , CD_COUPON
+		     , ID_MEMBER
+		     , STATUS
+		     , ID_STORE_USE
+		     , ORDER_NO
+		     , DT_PUBLISH
+		     , DT_USE
+		     , DT_REG
+		     , DT_EXPIRY_START
+		     , DT_EXPIRY_END
+		     , PIN_NUM
+		     , UDID
+		     , AMT_USE
+		     , AMT_CANCEL
+		     , NO_MEMBER_STAMP_REWARD
+		     , SYSDATE
+		  FROM CRMADMIN.TBS_COUPON_PIN
+		 WHERE CD_COUPON = #{CD_COUPON}
+		
+	</insert>
+	
+	<!--
+		QueryId     : LoginLog.deleteCouponPin
+		Description : 쿠폰핀 삭제
+	 -->
+	<delete id="deleteCouponPin" parameterType="map">
+		DELETE FROM CRMADMIN.TBS_COUPON_PIN
+		 WHERE CD_COUPON = #{CD_COUPON}
+
+	</delete>
+
+</mapper>

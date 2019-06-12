@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AnalyticMemberJob">
+	
+	<!--
+		QueryId     : AnalyticMemberJob.selectAllMember
+		Description : 전체회원 데이터 적재
+	 -->
+	<select id="selectAllMember" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.DD
+		     , A.CD_GENDER
+		     , A.CD_AGE
+		     , A.CD_GRADE
+		     , COUNT(*) AS CNT_MEMBER
+		  FROM (SELECT TO_CHAR((SYSDATE - 1), 'YYYY') AS YYYY
+		             , TO_CHAR((SYSDATE - 1), 'MM') AS MM
+		             , TO_CHAR((SYSDATE - 1), 'DD') AS DD
+		             , NVL(CD_GENDER, 'N') AS CD_GENDER
+		             , NVL(CD_AGE, '99') AS CD_AGE
+		             , NVL(CD_GRADE, '99') AS CD_GRADE
+		          FROM CRMADMIN.TBS_MEMBER
+		         WHERE DT_JOIN <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		        ) A
+		 GROUP BY YYYY, MM, DD, CD_GENDER, CD_AGE, CD_GRADE
+
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.insertAllMemberPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<insert id="insertAllMemberPeriod" parameterType="map">
+		INSERT INTO CRMADMIN.ANA_ALL_MEMBER_PERIOD (
+			   YYYY                /* 년 */
+			 , MM                  /* 월 */
+			 , DD                  /* 일 */
+			 , CD_GENDER           /* 성별 */
+			 , CD_AGE              /* 연령대 */
+			 , CD_GRADE            /* 등급코드 */
+			 , CNT_MEMBER          /* 회원수 */
+		) VALUES (
+		       #{YYYY}
+			 , #{MM}
+			 , #{DD}
+			 , #{CD_GENDER}
+			 , #{CD_AGE}
+			 , #{CD_GRADE}
+			 , #{CNT_MEMBER}
+		)
+	</insert>
+
+</mapper>

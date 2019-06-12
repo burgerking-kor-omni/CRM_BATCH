@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="deploy" name="Portal-Batch-Dev" basedir="../">
+	<!-- 환경설정(dev/real) -->
+	<property name="exec.mode" value="real"/>
+	
+	<property name="source.dir" value="${basedir}"/><!-- Target Folder -->
+	<property name="tar.name"   value="portal-batch.tar"/><!-- Package Tar Name -->
+	<property name="deploy.dir" value="/app/portal-batch"/><!-- deploy Folder -->
+
+	
+	<property name="server.ip" value="172.16.108.51"/>
+	<property name="server.id" value="root"/>
+	<property name="server.pw" value="1!symanager"/>
+	<property name="server.url" value="${server.id}@${server.ip}:/app/portal-batch/"/>
+	
+	
+	<target name="deploy">
+
+		<!-- ssh를 이용한 파일 업로드 -->
+		<scp todir="${server.url}" password="${server.pw}">
+			<fileset dir="${source.dir}">
+				<include name="${tar.name}"/>
+			</fileset>
+		</scp>
+		
+	</target>
+</project>

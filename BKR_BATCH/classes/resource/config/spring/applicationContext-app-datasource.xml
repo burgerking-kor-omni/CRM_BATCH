@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
+
+	<!--
+	================================================================================
+	DataSource 관련 Configuration
+	================================================================================
+	-->	
+	<bean id="mainDataSource" class="com.ubone.batch.core.dbcp.EncryptionConfigtDataSource">
+	  	<property name="driverClassName" value="${batch.datasource.main.driverClassName}" />
+	  	<property name="url"             value="${batch.datasource.main.url}" />
+	  	<property name="username"        value="${batch.datasource.main.username}" />
+	  	<property name="password"        value="${batch.datasource.main.password}" />
+	  	<property name="validationQuery" value="${batch.datasource.main.validationQuery}" />
+	</bean>
+	
+	<bean id="baseDataSource" class="com.ubone.batch.core.dbcp.EncryptionConfigtDataSource">
+	  	<property name="driverClassName" value="${batch.datasource.base.driverClassName}" />
+	  	<property name="url"             value="${batch.datasource.base.url}" />
+	  	<property name="username"        value="${batch.datasource.base.username}" />
+	  	<property name="password"        value="${batch.datasource.base.password}" />
+	  	<property name="validationQuery" value="${batch.datasource.base.validationQuery}" />
+	</bean>
+
+</beans>

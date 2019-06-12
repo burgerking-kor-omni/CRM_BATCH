@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AnalyticStampJob">
+	
+	<!--
+		QueryId     : AnalyticStampJob.selectStampPeriod
+		Description : 기존 데이터 존재여부 확인
+	 -->
+	<select id="selectStampPeriod" parameterType="map" resultType="lmap">
+		SELECT YYYY
+		     , MM
+		     , DD
+		     , CD_GENDER
+		     , CD_AGE
+		  FROM CRMADMIN.ANA_STAMP_PERIOD
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND DD = #{DD}
+		   AND CD_GENDER = #{CD_GENDER}
+		   AND CD_AGE = #{CD_AGE}
+	</select>
+	
+	<!--
+		QueryId     : AnalyticStampJob.insertStampPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<insert id="insertStampPeriod" parameterType="map">
+		INSERT INTO CRMADMIN.ANA_STAMP_PERIOD
+		(
+			   YYYY                /* 년 */
+			 , MM                  /* 월 */
+			 , DD                  /* 일 */
+			 , CD_GENDER           /* 성별 */
+			 , CD_AGE              /* 연령대 */
+		<if test="CNT_ONE != null and CNT_ONE != ''">
+			 , CNT_ONE             /* 1개 */
+		</if>
+		<if test="CNT_TWO != null and CNT_TWO != ''">
+			 , CNT_TWO             /* 2개 */
+		</if>
+		<if test="CNT_THREE != null and CNT_THREE != ''">
+			 , CNT_THREE           /* 3개 */
+		</if>
+		<if test="CNT_FOUR != null and CNT_FOUR != ''">
+			 , CNT_FOUR            /* 4개 */
+		</if>
+		<if test="CNT_FIVE != null and CNT_FIVE != ''">
+			 , CNT_FIVE            /* 5개 */
+		</if>
+		<if test="CNT_SIX != null and CNT_SIX != ''">
+			 , CNT_SIX             /* 6개 */
+		</if>
+		<if test="CNT_SEVEN != null and CNT_SEVEN != ''">
+			 , CNT_SEVEN           /* 7개 */
+		</if>
+		<if test="CNT_EIGHT != null and CNT_EIGHT != ''">
+			 , CNT_EIGHT           /* 8개 */
+		</if>
+		<if test="CNT_NINE != null and CNT_NINE != ''">
+			 , CNT_NINE            /* 9개 */
+		</if>
+		<if test="CNT_TEN != null and CNT_TEN != ''">
+			 , CNT_TEN             /* 10개 */
+		</if>
+		<if test="CNT_ELEVEN_MORE != null and CNT_ELEVEN_MORE != ''">
+			 , CNT_ELEVEN_MORE     /* 11개 이상 */
+		</if>
+		<if test="CNT_REWARD_FIVE != null and CNT_REWARD_FIVE != ''">
+			 , CNT_REWARD_FIVE     /* 리워드 5 */
+		</if>
+		<if test="CNT_REWARD_TEN != null and CNT_REWARD_TEN != ''">
+			 , CNT_REWARD_TEN      /* 리워드 10 */
+		</if>
+		<if test="CNT_REWARD_USE_FIVE != null and CNT_REWARD_USE_FIVE != ''">
+			 , CNT_REWARD_USE_FIVE /* 리워드사용 5 */
+		</if>
+		<if test="CNT_REWARD_USE_TEN != null and CNT_REWARD_USE_TEN != ''">
+			 , CNT_REWARD_USE_TEN  /* 리워드사용 10 */
+		</if>
+		) VALUES (
+		       #{YYYY}
+			 , #{MM}
+			 , #{DD}
+			 , #{CD_GENDER}
+			 , #{CD_AGE}
+		<if test="CNT_ONE != null and CNT_ONE != ''">
+			 , TO_NUMBER(#{CNT_ONE})
+		</if>
+		<if test="CNT_TWO != null and CNT_TWO != ''">
+			 , TO_NUMBER(#{CNT_TWO})
+		</if>
+		<if test="CNT_THREE != null and CNT_THREE != ''">
+			 , TO_NUMBER(#{CNT_THREE})
+		</if>
+		<if test="CNT_FOUR != null and CNT_FOUR != ''">
+			 , TO_NUMBER(#{CNT_FOUR})
+		</if>
+		<if test="CNT_FIVE != null and CNT_FIVE != ''">
+			 , TO_NUMBER(#{CNT_FIVE})
+		</if>
+		<if test="CNT_SIX != null and CNT_SIX != ''">
+			 , TO_NUMBER(#{CNT_SIX})
+		</if>
+		<if test="CNT_SEVEN != null and CNT_SEVEN != ''">
+			 , TO_NUMBER(#{CNT_SEVEN})
+		</if>
+		<if test="CNT_EIGHT != null and CNT_EIGHT != ''">
+			 , TO_NUMBER(#{CNT_EIGHT})
+		</if>
+		<if test="CNT_NINE != null and CNT_NINE != ''">
+			 , TO_NUMBER(#{CNT_NINE})
+		</if>
+		<if test="CNT_TEN != null and CNT_TEN != ''">
+			 , TO_NUMBER(#{CNT_TEN})
+		</if>
+		<if test="CNT_ELEVEN_MORE != null and CNT_ELEVEN_MORE != ''">
+			 , TO_NUMBER(#{CNT_ELEVEN_MORE})
+		</if>
+		<if test="CNT_REWARD_FIVE != null and CNT_REWARD_FIVE != ''">
+			 , TO_NUMBER(#{CNT_REWARD_FIVE})
+		</if>
+		<if test="CNT_REWARD_TEN != null and CNT_REWARD_TEN != ''">
+			 , TO_NUMBER(#{CNT_REWARD_TEN})
+		</if>
+		<if test="CNT_REWARD_USE_FIVE != null and CNT_REWARD_USE_FIVE != ''">
+			 , TO_NUMBER(#{CNT_REWARD_USE_FIVE})
+		</if>
+		<if test="CNT_REWARD_USE_TEN != null and CNT_REWARD_USE_TEN != ''">
+			 , TO_NUMBER(#{CNT_REWARD_USE_TEN})
+		</if>
+		)
+	</insert>
+	
+	<!--
+		QueryId     : AnalyticStampJob.updateStampPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<update id="updateStampPeriod" parameterType="map">
+		UPDATE CRMADMIN.ANA_STAMP_PERIOD
+		   SET YYYY = #{YYYY}
+		<if test="CNT_ONE != null and CNT_ONE != ''">
+			 , CNT_ONE = TO_NUMBER(#{CNT_ONE})
+		</if>
+		<if test="CNT_TWO != null and CNT_TWO != ''">
+			 , CNT_TWO = TO_NUMBER(#{CNT_TWO})
+		</if>
+		<if test="CNT_THREE != null and CNT_THREE != ''">
+			 , CNT_THREE = TO_NUMBER(#{CNT_THREE})
+		</if>
+		<if test="CNT_FOUR != null and CNT_FOUR != ''">
+			 , CNT_FOUR = TO_NUMBER(#{CNT_FOUR})
+		</if>
+		<if test="CNT_FIVE != null and CNT_FIVE != ''">
+			 , CNT_FIVE = TO_NUMBER(#{CNT_FIVE})
+		</if>
+		<if test="CNT_SIX != null and CNT_SIX != ''">
+			 , CNT_SIX = TO_NUMBER(#{CNT_SIX})
+		</if>
+		<if test="CNT_SEVEN != null and CNT_SEVEN != ''">
+			 , CNT_SEVEN = TO_NUMBER(#{CNT_SEVEN})
+		</if>
+		<if test="CNT_EIGHT != null and CNT_EIGHT != ''">
+			 , CNT_EIGHT = TO_NUMBER(#{CNT_EIGHT})
+		</if>
+		<if test="CNT_NINE != null and CNT_NINE != ''">
+			 , CNT_NINE = TO_NUMBER(#{CNT_NINE})
+		</if>
+		<if test="CNT_TEN != null and CNT_TEN != ''">
+			 , CNT_TEN = TO_NUMBER(#{CNT_TEN})
+		</if>
+		<if test="CNT_ELEVEN_MORE != null and CNT_ELEVEN_MORE != ''">
+			 , CNT_ELEVEN_MORE = TO_NUMBER(#{CNT_ELEVEN_MORE})
+		</if>
+		<if test="CNT_REWARD_FIVE != null and CNT_REWARD_FIVE != ''">
+			 , CNT_REWARD_FIVE = TO_NUMBER(#{CNT_REWARD_FIVE})
+		</if>
+		<if test="CNT_REWARD_TEN != null and CNT_REWARD_TEN != ''">
+			 , CNT_REWARD_TEN = TO_NUMBER(#{CNT_REWARD_TEN})
+		</if>
+		<if test="CNT_REWARD_USE_FIVE != null and CNT_REWARD_USE_FIVE != ''">
+			 , CNT_REWARD_USE_FIVE = TO_NUMBER(#{CNT_REWARD_USE_FIVE})
+		</if>
+		<if test="CNT_REWARD_USE_TEN != null and CNT_REWARD_USE_TEN != ''">
+			 , CNT_REWARD_USE_TEN = TO_NUMBER(#{CNT_REWARD_USE_TEN})
+		</if>
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND DD = #{DD}
+		   AND CD_GENDER = #{CD_GENDER}
+		   AND CD_AGE = #{CD_AGE}
+
+	</update>
+	
+	<!--
+		QueryId     : AnalyticStampJob.selectSaveStamp
+		Description : 스탬프 개수 별 회원 수 적재용 데이터 조회
+	 -->
+	<select id="selectSaveStamp" parameterType="map" resultType="lmap">
+		SELECT AAAA.YYYY
+		     , AAAA.MM
+		     , AAAA.DD
+		     , AAAA.CD_GENDER
+		     , AAAA.CD_AGE
+		     , SUM(AAAA.CNT_ONE) AS CNT_ONE
+		     , SUM(AAAA.CNT_TWO) AS CNT_TWO
+		     , SUM(AAAA.CNT_THREE) AS CNT_THREE
+		     , SUM(AAAA.CNT_FOUR) AS CNT_FOUR
+		     , SUM(AAAA.CNT_FIVE) AS CNT_FIVE
+		     , SUM(AAAA.CNT_SIX) AS CNT_SIX
+		     , SUM(AAAA.CNT_SEVEN) AS CNT_SEVEN
+		     , SUM(AAAA.CNT_EIGHT) AS CNT_EIGHT
+		     , SUM(AAAA.CNT_NINE) AS CNT_NINE
+		     , SUM(AAAA.CNT_TEN) AS CNT_TEN
+		     , SUM(AAAA.CNT_ELEVEN_MORE) AS CNT_ELEVEN_MORE
+		  FROM (SELECT AAA.YYYY
+		             , AAA.MM
+		             , AAA.DD
+		             , AAA.CD_GENDER
+		             , AAA.CD_AGE
+		             , DECODE(AAA.CNT_STAMP_INCRE, 1, 1, 0) AS CNT_ONE
+		             , DECODE(AAA.CNT_STAMP_INCRE, 2, 1, 0) AS CNT_TWO
+		             , DECODE(AAA.CNT_STAMP_INCRE, 3, 1, 0) AS CNT_THREE
+		             , DECODE(AAA.CNT_STAMP_INCRE, 4, 1, 0) AS CNT_FOUR
+		             , DECODE(AAA.CNT_STAMP_INCRE, 5, 1, 0) AS CNT_FIVE
+		             , DECODE(AAA.CNT_STAMP_INCRE, 6, 1, 0) AS CNT_SIX
+		             , DECODE(AAA.CNT_STAMP_INCRE, 7, 1, 0) AS CNT_SEVEN
+		             , DECODE(AAA.CNT_STAMP_INCRE, 8, 1, 0) AS CNT_EIGHT
+		             , DECODE(AAA.CNT_STAMP_INCRE, 9, 1, 0) AS CNT_NINE
+		             , DECODE(AAA.CNT_STAMP_INCRE, 10, 1, 0) AS CNT_TEN
+		             , CASE WHEN 10 <![CDATA[<]]> AAA.CNT_STAMP_INCRE THEN 1
+		                    ELSE 0
+		                END CNT_ELEVEN_MORE
+		          FROM (SELECT AA.YYYY
+                             , AA.MM
+                             , AA.DD
+                             , AA.CD_GENDER
+                             , AA.CD_AGE
+                             , AA.CNT_STAMP_INCRE_PLUS - CNT_STAMP_INCRE_MINUS AS CNT_STAMP_INCRE
+                          FROM (SELECT TO_CHAR(B.DT_REG, 'YYYY') AS YYYY
+                                     , TO_CHAR(B.DT_REG, 'MM') AS MM
+                                     , TO_CHAR(B.DT_REG, 'DD') AS DD
+                                     , NVL(CD_GENDER, 'N') AS CD_GENDER
+                                     , NVL(CD_AGE, '99') AS CD_AGE
+                                     , DECODE(B.CD_INCREMENT, '01', CNT_STAMP_INCRE, 0) AS CNT_STAMP_INCRE_PLUS
+                                     , DECODE(B.CD_INCREMENT, '02', CNT_STAMP_INCRE, 0) AS CNT_STAMP_INCRE_MINUS
+                                  FROM CRMADMIN.TBS_MEMBER A
+                                 INNER JOIN CRMADMIN.TBS_MEMBER_STAMP_RECORD B
+                                    ON A.ID_MEMBER = B.ID_MEMBER    
+                                 WHERE B.DT_REG >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+                                   AND B.DT_REG <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+                                ) AA
+		                ) AAA
+		        ) AAAA
+		 GROUP BY AAAA.YYYY, AAAA.MM, AAAA.DD, AAAA.CD_GENDER, AAAA.CD_AGE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticStampJob.selectStampReward
+		Description : 리워드 적재용 데이터 조회
+	 -->
+	<select id="selectStampReward" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.DD
+		     , A.CD_GENDER
+		     , A.CD_AGE
+		     , SUM(A.CNT_REWARD_FIVE) AS CNT_REWARD_FIVE
+		     , SUM(A.CNT_REWARD_TEN) AS CNT_REWARD_TEN
+		  FROM (SELECT TO_CHAR(B.DT_REG, 'YYYY') AS YYYY
+		             , TO_CHAR(B.DT_REG, 'MM') AS MM
+		             , TO_CHAR(B.DT_REG, 'DD') AS DD
+		             , NVL(CD_GENDER, 'N') AS CD_GENDER
+		             , NVL(CD_AGE, '99') AS CD_AGE
+		             , DECODE(B.TP_REWARD, '5', 1, 0) AS CNT_REWARD_FIVE
+		             , DECODE(B.TP_REWARD, '10', 1, 0) AS CNT_REWARD_TEN
+		          FROM CRMADMIN.TBS_MEMBER A
+		         INNER JOIN CRMADMIN.TBS_MEMBER_STAMP_REWARD B
+		            ON A.ID_MEMBER = B.ID_MEMBER    
+		         WHERE B.DT_REG >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+		           AND B.DT_REG <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		        ) A
+		 GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticStampJob.selectStampUseReward
+		Description : 리워드 사용 적재용 데이터 조회
+	 -->
+	<select id="selectStampUseReward" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.DD
+		     , A.CD_GENDER
+		     , A.CD_AGE
+		     , SUM(A.CNT_REWARD_FIVE) AS CNT_REWARD_USE_FIVE
+		     , SUM(A.CNT_REWARD_TEN) AS CNT_REWARD_USE_TEN
+		  FROM (SELECT TO_CHAR(B.DT_STAMP_ISSUE, 'YYYY') AS YYYY
+		             , TO_CHAR(B.DT_STAMP_ISSUE, 'MM') AS MM
+		             , TO_CHAR(B.DT_STAMP_ISSUE, 'DD') AS DD
+		             , NVL(CD_GENDER, 'N') AS CD_GENDER
+		             , NVL(CD_AGE, '99') AS CD_AGE
+		             , DECODE(B.TP_REWARD, '5', 1, 0) AS CNT_REWARD_FIVE
+		             , DECODE(B.TP_REWARD, '10', 1, 0) AS CNT_REWARD_TEN
+		          FROM CRMADMIN.TBS_MEMBER A
+		         INNER JOIN CRMADMIN.TBS_MEMBER_STAMP_REWARD B
+		            ON A.ID_MEMBER = B.ID_MEMBER    
+		         WHERE B.DT_STAMP_ISSUE >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+		           AND B.DT_STAMP_ISSUE <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		        ) A
+		 GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE
+	</select>
+	
+</mapper>

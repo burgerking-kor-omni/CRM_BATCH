@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!--
+		================================================================================
+		Batch 관련 Configuration
+		================================================================================
+	-->
+	<context:annotation-config />
+
+	<!-- Properties 설정 : 외부 프로퍼티 파일 사용을 위한 설정 -->
+	<context:property-placeholder location="classpath:resource/config/config.xml"/>
+	
+	<!-- BatchDaemon 설정 -->
+	<bean id="batchDaemon" class="com.ubone.batch.core.main.BatchDaemon">
+		<property name="pollingTime" value="${batch.daemon.polling.cycle}" />
+	</bean>
+	
+	<!-- 	ApplicationContext singleTone으로 가지고 오기 위한. -->
+	<bean id="applicationContextProvider" class="com.ubone.batch.utils.ApplicationContextProvider"/>
+</beans>

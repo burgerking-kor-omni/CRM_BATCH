@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AnalyticStorStampJob">
+	
+	<!--
+		QueryId     : AnalyticStorStampJob.selectStorStampPeriod
+		Description : 기존 데이터 존재여부 확인
+	 -->
+	<select id="selectStorStampPeriod" parameterType="map" resultType="lmap">
+		SELECT YYYY
+		     , MM
+		     , STOR_CD
+		  FROM CRMADMIN.ANA_STOR_STAMP_PERIOD
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND STOR_CD = #{STOR_CD}
+	</select>
+	
+	<!--
+		QueryId     : AnalyticStorStampJob.insertStorStampPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<insert id="insertStorStampPeriod" parameterType="map">
+		INSERT INTO CRMADMIN.ANA_STOR_STAMP_PERIOD
+		(
+			   YYYY                /* 년 */
+			 , MM                  /* 월 */
+			 , STOR_CD             /* 매장코드 */
+		<if test="CNT_ALL_MEMBER != null and CNT_ALL_MEMBER != ''">
+			 , CNT_ALL_MEMBER      /* 적립회원수 */
+		</if>
+		<if test="CNT_ALL_STAMP != null and CNT_ALL_STAMP != ''">
+			 , CNT_ALL_STAMP       /* 적립스탬프 */
+		</if>
+		<if test="CNT_J_MEMBER != null and CNT_J_MEMBER != ''">
+			 , CNT_J_MEMBER        /* 적립회원수 - 주니어 */
+		</if>
+		<if test="CNT_J_STAMP != null and CNT_J_STAMP != ''">
+			 , CNT_J_STAMP         /* 적립스탬프수 - 주니어 */
+		</if>
+		<if test="CNT_W_MEMBER != null and CNT_W_MEMBER != ''">
+			 , CNT_W_MEMBER        /* 적립회원수 - 와퍼 */
+		</if>
+		<if test="CNT_W_STAMP != null and CNT_W_STAMP != ''">
+			 , CNT_W_STAMP         /* 적립스탬프수 - 와퍼 */
+		</if>
+		<if test="CNT_K_MEMBER != null and CNT_K_MEMBER != ''">
+			 , CNT_K_MEMBER        /* 적립회원수 - 킹 */
+		</if>
+		<if test="CNT_K_STAMP != null and CNT_K_STAMP != ''">
+			 , CNT_K_STAMP        /* 적립스탬프수 - 킹 */
+		</if>
+		) VALUES (
+		       #{YYYY}
+			 , #{MM}
+			 , #{STOR_CD}
+		<if test="CNT_ALL_MEMBER != null and CNT_ALL_MEMBER != ''">
+			 , TO_NUMBER(#{CNT_ALL_MEMBER})
+		</if>
+		<if test="CNT_ALL_STAMP != null and CNT_ALL_STAMP != ''">
+			 , TO_NUMBER(#{CNT_ALL_STAMP})
+		</if>
+		<if test="CNT_J_MEMBER != null and CNT_J_MEMBER != ''">
+			 , TO_NUMBER(#{CNT_J_MEMBER})
+		</if>
+		<if test="CNT_J_STAMP != null and CNT_J_STAMP != ''">
+			 , TO_NUMBER(#{CNT_J_STAMP})
+		</if>
+		<if test="CNT_W_MEMBER != null and CNT_W_MEMBER != ''">
+			 , TO_NUMBER(#{CNT_W_MEMBER})
+		</if>
+		<if test="CNT_W_STAMP != null and CNT_W_STAMP != ''">
+			 , TO_NUMBER(#{CNT_W_STAMP})
+		</if>
+		<if test="CNT_K_MEMBER != null and CNT_K_MEMBER != ''">
+			 , TO_NUMBER(#{CNT_K_MEMBER})
+		</if>
+		<if test="CNT_K_STAMP != null and CNT_K_STAMP != ''">
+			 , TO_NUMBER(#{CNT_K_STAMP})
+		</if>
+		)
+	</insert>
+	
+	<!--
+		QueryId     : AnalyticStorStampJob.updateStorStampPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<update id="updateStorStampPeriod" parameterType="map">
+		UPDATE CRMADMIN.ANA_STOR_STAMP_PERIOD
+		   SET YYYY = #{YYYY}
+		<if test="CNT_ALL_MEMBER != null and CNT_ALL_MEMBER != ''">
+			 , CNT_ALL_MEMBER = TO_NUMBER(#{CNT_ALL_MEMBER})
+		</if>
+		<if test="CNT_ALL_STAMP != null and CNT_ALL_STAMP != ''">
+			 , CNT_ALL_STAMP = TO_NUMBER(#{CNT_ALL_STAMP})
+		</if>
+		<if test="CNT_J_MEMBER != null and CNT_J_MEMBER != ''">
+			 , CNT_J_MEMBER = TO_NUMBER(#{CNT_J_MEMBER})
+		</if>
+		<if test="CNT_J_STAMP != null and CNT_J_STAMP != ''">
+			 , CNT_J_STAMP = TO_NUMBER(#{CNT_J_STAMP})
+		</if>
+		<if test="CNT_W_MEMBER != null and CNT_W_MEMBER != ''">
+			 , CNT_W_MEMBER = TO_NUMBER(#{CNT_W_MEMBER})
+		</if>
+		<if test="CNT_W_STAMP != null and CNT_W_STAMP != ''">
+			 , CNT_W_STAMP = TO_NUMBER(#{CNT_W_STAMP})
+		</if>
+		<if test="CNT_K_MEMBER != null and CNT_K_MEMBER != ''">
+			 , CNT_K_MEMBER = TO_NUMBER(#{CNT_K_MEMBER})
+		</if>
+		<if test="CNT_K_STAMP != null and CNT_K_STAMP != ''">
+			 , CNT_K_STAMP = TO_NUMBER(#{CNT_K_STAMP})
+		</if>
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND STOR_CD = #{STOR_CD}
+
+	</update>
+	
+	<!--
+		QueryId     : AnalyticStorStampJob.selectStorStamp
+		Description : 매장별 스탬프 적재용 데이터 조회
+	 -->
+	<select id="selectStorStamp" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.STOR_CD
+		     , SUM(A.CNT_J_MEMBER) + SUM(A.CNT_W_MEMBER) + SUM(A.CNT_K_MEMBER) AS CNT_ALL_MEMBER
+		     , SUM(A.CNT_J_STAMP) + SUM(A.CNT_W_STAMP) + SUM(A.CNT_K_STAMP) AS CNT_ALL_STAMP
+		     , SUM(A.CNT_J_MEMBER) AS CNT_J_MEMBER
+		     , SUM(A.CNT_J_STAMP) AS CNT_J_STAMP
+		     , SUM(A.CNT_W_MEMBER) AS CNT_W_MEMBER
+		     , SUM(A.CNT_W_STAMP) AS CNT_W_STAMP
+		     , SUM(A.CNT_K_MEMBER) AS CNT_K_MEMBER
+		     , SUM(A.CNT_K_STAMP) AS CNT_K_STAMP
+		  FROM (SELECT A.YYYY
+		             , A.MM
+		             , A.STOR_CD
+		             , CASE WHEN A.CD_GRADE = '01' THEN 1
+		                    ELSE 0
+		                END CNT_J_MEMBER
+		             , CASE WHEN A.CD_GRADE = '02' THEN 1
+		                    ELSE 0
+		                END CNT_W_MEMBER
+		             , CASE WHEN A.CD_GRADE = '03' THEN 1
+		                    ELSE 0
+		                END CNT_K_MEMBER 
+		             , CASE WHEN A.CD_GRADE = '01' THEN SUM(A.CNT_STAMP_INCRE_PLUS) - SUM(A.CNT_STAMP_INCRE_MINUS)
+		                    ELSE 0
+		                END CNT_J_STAMP
+		             , CASE WHEN A.CD_GRADE = '02' THEN SUM(A.CNT_STAMP_INCRE_PLUS) - SUM(A.CNT_STAMP_INCRE_MINUS)
+		                    ELSE 0
+		                END CNT_W_STAMP
+		             , CASE WHEN A.CD_GRADE = '03' THEN SUM(A.CNT_STAMP_INCRE_PLUS) - SUM(A.CNT_STAMP_INCRE_MINUS)
+		                    ELSE 0
+		                END CNT_K_STAMP     
+		          FROM (SELECT TO_CHAR(B.DT_REG, 'YYYY') AS YYYY
+		                     , TO_CHAR(B.DT_REG, 'MM') AS MM
+		                     , NVL(A.CD_GRADE, '99') AS CD_GRADE
+		                     , B.STOR_CD
+		                     , DECODE(B.CD_INCREMENT, '01', B.CNT_STAMP_INCRE, 0) AS CNT_STAMP_INCRE_PLUS
+		                     , DECODE(B.CD_INCREMENT, '02', B.CNT_STAMP_INCRE, 0) AS CNT_STAMP_INCRE_MINUS
+		                  FROM CRMADMIN.TBS_MEMBER A
+		                 INNER JOIN CRMADMIN.TBS_MEMBER_STAMP_RECORD B
+		                    ON A.ID_MEMBER = B.ID_MEMBER
+		                 WHERE B.DT_REG >= TO_DATE(TO_CHAR(SYSDATE-1, 'YYYY-MM') || '-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+		                   AND B.DT_REG <![CDATA[<=]]> TO_DATE(TO_CHAR(LAST_DAY(SYSDATE-1), 'YYYY-MM-DD') || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		                   AND B.STOR_CD IS NOT NULL
+		                ) A
+		          GROUP BY A.YYYY, A.MM, A.STOR_CD, A.CD_GRADE
+		        ) A
+		 GROUP BY A.YYYY, A.MM, A.STOR_CD
+	</select>
+	
+</mapper>

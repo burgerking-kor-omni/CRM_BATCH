@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="GradeJob">
+	
+	<!--
+		QueryId     : GradeUpJob.selectMemberInfo
+		Description : 전일자 기준 스템프 적립이 있는 회원 목록 조회
+	 -->
+	<select id="selectMemberInfo" parameterType="map" resultType="lmap">
+		SELECT ID_MEMBER
+		     , NVL(CNT_STAMP_STACK, 0) AS CNT_STAMP_STACK
+		  FROM CRMADMIN.TBS_MEMBER_STAMP_RECORD
+		 WHERE YN_STMAP_LAST = 'Y'
+		   AND DT_REG >= TO_DATE (TO_CHAR(SYSDATE-1, 'YYYY-MM-DD') || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+		   AND DT_REG <![CDATA[<=]]> TO_DATE (TO_CHAR(SYSDATE-1, 'YYYY-MM-DD') || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+
+	</select>
+	
+	<!--
+		QueryId     : GradeUpJob.selectMemberGrade
+		Description : 스템프 변경이 있던 회원의 기존등급 확인
+	 -->
+	<select id="selectMemberGrade" parameterType="map" resultType="lmap">
+		SELECT ID_MEMBER
+		     , CD_GRADE
+		  FROM CRMADMIN.TBS_MEMBER
+		 WHERE ID_MEMBER = #{ID_MEMBER}
+
+	</select>
+	
+	<!--
+		QueryId     : GradeUpJob.selectGradeInfo
+		Description : 등급기준조회
+	 -->
+	<select id="selectGradeInfo" parameterType="map" resultType="lmap">
+		SELECT CASE WHEN CD_GRADE = '03' AND ('01' = #{CD_GRADE} OR '02' = #{CD_GRADE}) THEN 'Y'
+		            WHEN CD_GRADE = '02' AND '01' = #{CD_GRADE} THEN 'Y'
+		            WHEN CD_GRADE = '01' THEN 'N'
+		            ELSE 'N'
+		        END TP_CHNG
+		     , CD_GRADE
+		  FROM CRMADMIN.TBS_GRADE
+		 WHERE FG_USE = 'Y' 
+		   AND CNT_MIN_STAMP <![CDATA[<=]]> TO_NUMBER(#{CNT_STAMP_STACK})   
+		   AND CNT_MAX_STAMP >= TO_NUMBER(#{CNT_STAMP_STACK})
+
+	</select>
+	
+	<!--
+		QueryId     : GradeUpJob.selectDownStand
+		Description : 하향기준조회
+	 -->
+	<select id="selectDownStand" parameterType="map" resultType="lmap">
+		SELECT CD_DOWN_STAD
+		  FROM CRMADMIN.TBS_DOWN_STAND
+		 WHERE FG_USE = 'Y'
+
+	</select>
+	
+	<!--
+		QueryId     : GradeUpJob.selectGradeDownTarget
+		Description : 하향대상조회
+	 -->
+	<select id="selectGradeDownTarget" parameterType="map" resultType="lmap">
+		SELECT ID_MEMBER
+		     , NM_MEMBER
+		     , CASE WHEN CD_GRADE = '01' THEN '01'
+		            WHEN CD_GRADE = '02' THEN '01'
+		            WHEN CD_GRADE = '03' THEN '02'
+		       ELSE '01'
+		    END CD_GRADE_CHNG
+		  FROM CRMADMIN.TBS_MEMBER TM
+		 WHERE TO_CHAR(SYSDATE, 'YYYYMMDD') = TO_CHAR(ADD_MONTHS(DT_CHNG_GRADE, TO_NUMBER(#{CD_DOWN_STAD})), 'YYYYMMDD')
+
+	</select>
+	
+	<!--
+		QueryId     : ApiUser.updateMemberGrade
+		Description : 회원등급변경
+	 -->
+	<update id="updateMemberGrade" parameterType="map">
+		UPDATE CRMADMIN.TBS_MEMBER
+		   SET CD_GRADE = #{CD_GRADE}
+		     , TP_GRADE = #{TP_GRADE}
+		     , DT_CHNG_GRADE = SYSDATE
+		 WHERE ID_MEMBER = #{ID_MEMBER}
+
+	</update>
+
+</mapper>

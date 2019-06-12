@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DormancyJob">
+	
+	<!--
+		QueryId     : DormancyJob.selectDormancyMamber
+		Description : 휴면 처리 대상자 조회
+	 -->
+	<select id="selectDormancyMamber" parameterType="map" resultType="lmap">
+		SELECT ID_MEMBER
+		  FROM CRMADMIN.TBS_MEMBER
+		 WHERE CD_STATUS = 'A'
+		   AND DT_LAST_LOGIN <![CDATA[<]]> ADD_MONTHS(SYSDATE, -12)
+	</select>
+	
+	<!--
+		QueryId     : DormancyJob.updateDormancyMamber
+		Description : 휴면 처리
+	 -->
+	<update id="updateDormancyMamber" parameterType="map">
+		UPDATE CRMADMIN.TBS_MEMBER
+		   SET CD_STATUS = 'H'
+		     , DT_DORMANCY = SYSDATE
+		 WHERE ID_MEMBER = #{ID_MEMBER}
+
+	</update>
+
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AnalyticGradeJob">
+	
+	<!--
+		QueryId     : AnalyticGradeJob.selectGradePeriod
+		Description : 기존 데이터 존재여부 확인
+	 -->
+	<select id="selectGradePeriod" parameterType="map" resultType="lmap">
+		SELECT YYYY
+		     , MM
+		  FROM CRMADMIN.ANA_MSHIP_CHANGE_PERIOD
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+	</select>
+	
+	<!--
+		QueryId     : AnalyticGradeJob.insertGradePeriod
+		Description : 통계 데이터 적재
+	 -->
+	<insert id="insertGradePeriod" parameterType="map">
+		INSERT INTO CRMADMIN.ANA_MSHIP_CHANGE_PERIOD
+		(
+			   YYYY                /* 년 */
+			 , MM                  /* 월 */
+		<if test="CNT_J_DOWN != null and CNT_J_DOWN != ''">
+			 , CNT_J_DOWN          /* 하향회원수 - 주니어 */
+		</if>
+		<if test="CNT_W_UP != null and CNT_W_UP != ''">
+			 , CNT_W_UP            /* 상향회원수 - 와퍼 */
+		</if>
+		<if test="CNT_W_DOWN != null and CNT_W_DOWN != ''">
+			 , CNT_W_DOWN          /* 하향회원수 - 와퍼 */
+		</if>
+		<if test="CNT_K_UP != null and CNT_K_UP != ''">
+			 , CNT_K_UP            /* 상향회원수 - 킹 */
+		</if>
+		) VALUES (
+		       #{YYYY}
+			 , #{MM}
+		<if test="CNT_J_DOWN != null and CNT_J_DOWN != ''">
+			 , TO_NUMBER(#{CNT_J_DOWN})
+		</if>
+		<if test="CNT_W_UP != null and CNT_W_UP != ''">
+			 , TO_NUMBER(#{CNT_W_UP})
+		</if>
+		<if test="CNT_W_DOWN != null and CNT_W_DOWN != ''">
+			 , TO_NUMBER(#{CNT_W_DOWN})
+		</if>
+		<if test="CNT_K_UP != null and CNT_K_UP != ''">
+			 , TO_NUMBER(#{CNT_K_UP})
+		</if>
+		)
+	</insert>
+	
+	<!--
+		QueryId     : AnalyticGradeJob.updateGradePeriod
+		Description : 통계 데이터 적재
+	 -->
+	<update id="updateGradePeriod" parameterType="map">
+		UPDATE CRMADMIN.ANA_MSHIP_CHANGE_PERIOD
+		   SET YYYY = #{YYYY}
+		<if test="CNT_J_DOWN != null and CNT_J_DOWN != ''">
+			 , CNT_J_DOWN = TO_NUMBER(#{CNT_J_DOWN})
+		</if>
+		<if test="CNT_W_UP != null and CNT_W_UP != ''">
+			 , CNT_W_UP = TO_NUMBER(#{CNT_W_UP})
+		</if>
+		<if test="CNT_W_DOWN != null and CNT_W_DOWN != ''">
+			 , CNT_W_DOWN = TO_NUMBER(#{CNT_W_DOWN})
+		</if>
+		<if test="CNT_K_UP != null and CNT_K_UP != ''">
+			 , CNT_K_UP = TO_NUMBER(#{CNT_K_UP})
+		</if>
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+
+	</update>
+	
+	<!--
+		QueryId     : AnalyticGradeJob.selectGrade
+		Description : 멤버십 변동 적재용 데이터 조회
+	 -->
+	<select id="selectGrade" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , SUM(A.CNT_J_DOWN) AS CNT_J_DOWN
+		     , SUM(A.CNT_W_UP) AS CNT_W_UP
+		     , SUM(A.CNT_W_DOWN) AS CNT_W_DOWN
+		     , SUM(A.CNT_K_UP) AS CNT_K_UP
+		  FROM (SELECT A.YYYY
+		             , A.MM
+		             , A.CD_GRADE
+		             , CASE WHEN A.CD_GRADE = '01' THEN CNT_DOWN
+		                    ELSE 0
+		                END CNT_J_DOWN
+		             , CASE WHEN A.CD_GRADE = '02' THEN CNT_UP
+		                    ELSE 0
+		                END CNT_W_UP
+		             , CASE WHEN A.CD_GRADE = '02' THEN CNT_DOWN
+		                    ELSE 0
+		                END CNT_W_DOWN
+		             , CASE WHEN A.CD_GRADE = '03' THEN CNT_UP
+		                    ELSE 0
+		                END CNT_K_UP
+		          FROM (SELECT TO_CHAR(A.DT_CHNG_GRADE, 'YYYY') AS YYYY
+		                     , TO_CHAR(A.DT_CHNG_GRADE, 'MM') AS MM
+		                     , NVL(A.CD_GRADE, '99') AS CD_GRADE
+		                     , DECODE(A.TP_GRADE, 'U', 1, 0) AS CNT_UP
+		                     , DECODE(A.TP_GRADE, 'D', 1, 0) AS CNT_DOWN
+		                  FROM CRMADMIN.TBS_MEMBER A
+		                 WHERE DT_CHNG_GRADE >= TO_DATE(TO_CHAR(SYSDATE-1, 'YYYY-MM') || '-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                           AND DT_CHNG_GRADE <![CDATA[<=]]> TO_DATE(TO_CHAR(LAST_DAY(SYSDATE-1), 'YYYY-MM-DD') || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		                ) A
+		        ) A
+		 GROUP BY A.YYYY, A.MM
+	</select>
+	
+</mapper>

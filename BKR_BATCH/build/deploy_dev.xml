@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="deploy" name="Deploy-UB-Batch for Dev." basedir="../">
+	<!-- 환경설정(dev/real) -->
+	<property name="exec.mode" value="dev"/>
+	<property name="source.dir" value="${basedir}"/><!-- Target Folder -->
+	<property name="tar.name"   value="ub-batch.tar"/><!-- Package Tar Name -->
+	<property name="deploy.dir" value="/app/ub-batch"/><!-- deploy Folder -->
+
+	<target name="deploy">
+		<!-- 1. deploy folder 생성 -->
+		<mkdir dir="${deploy.dir}"/>
+
+		<!-- 2. Tar 파일 이동 -->
+		<copy todir="${deploy.dir}">
+			<fileset dir="${source.dir}">
+				<include name="${tar.name}"/>
+			</fileset>
+		</copy>
+		
+
+		<!-- 3. Tar 파일 풀기 -->
+		<untar src="${deploy.dir}/${tar.name}" dest="${deploy.dir}" overwrite="yes"/>
+		
+		<!-- 4. 실행권한 부여하기 -->
+		<chmod perm="+x">
+			<fileset dir="${deploy.dir}">
+				<include name="bin/*.sh"/>
+			</fileset>
+		</chmod>
+		
+	</target>
+</project>

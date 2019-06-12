@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Build UB-Batch for dev mode" basedir="../">
+	<!-- 환경설정(dev/real) -->
+	<property name="exec.mode" value="dev"/>
+	<property name="build.dir" value="build"/><!-- build Folder -->
+	<property name="target.dir" value="target"/><!-- Target Folder -->
+	<property name="jar.name" value="ub-batch.jar"/><!-- Execute Jar Name -->
+	<property name="tar.name" value="ub-batch.tar"/><!-- Package Tar Name -->
+
+	<!-- 0.Clean -->
+	<target name="clean">
+		<echo>cleanning ...</echo>
+		<delete dir="${build.dir}/classes" failonerror="false" />
+	</target>
+	
+	<!-- 1.ClassPath 설정 -->
+	<target name="set-class-path">
+		<path id="class-path">
+			<fileset dir="lib">
+				<include name="**/*.jar"/>
+			</fileset>
+		</path>
+	</target>
+	
+    <!-- 2.Java Compile -->
+	<target name="compile" depends="set-class-path">
+		<!-- classes 폴더 생성 -->
+		<mkdir dir="${build.dir}/classes"/>
+		
+		<echo> Compile Start 1234</echo>
+		<!--<javac debug="true" encoding="UTF-8" destdir="${build.dir}/classes" includeAntRuntime="false" nowarn="true" deprecation="false">-->
+		<javac debug="true" encoding="UTF-8" source="1.7" target="1.7" destdir="${build.dir}/classes"
+			includeAntRuntime="false" nowarn="true" deprecation="false" verbose="true"
+			executable="D:/dev_java/bin/java">
+			<src path="src" />
+			<classpath refid="class-path"/>
+			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
+
+		<echo>copy src.resource files..</echo>
+        <copy todir="${build.dir}/classes" overwrite="yes" verbose="true">
+        	<fileset dir="src">
+        		<include name="**/*.*"/>
+        		<exclude name="**/*.java"/>
+        	</fileset>
+        	<fileset dir="src.resource">
+        		<include name="**/*.*"/>
+        	</fileset>
+        </copy>
+	</target>
+	
+    <!-- 3.빌드 모드별 환경 설정 복사 -->
+	<target name="copy_config">
+        <copy todir="${build.dir}/classes" overwrite="yes" verbose="true">
+        	<fileset dir="${build.dir}/${exec.mode}">
+        		<include name="**/*.*"/>
+        	</fileset>
+        </copy>
+	</target>
+
+    <!-- 4.라이브러리 절대경로를 상대경로로 변경 -->
+	<target name="make_lib_path">
+		<echo>${basedir}</echo>
+		<pathconvert dirsep="/" pathsep=" " property="lib-file" refid="class-path">
+			<map from="${basedir}" to=".."/>
+		</pathconvert>
+	</target>	
+	
+    <!-- 5.Execute Jar생성 -->
+	<target name="create_jar" depends="make_lib_path">
+
+		<echo>Create Manifest File</echo>
+		<echo>Main-Class : com.ubone.batch.core.Starter</echo>
+		<echo>Class-Path : . ${lib-file}</echo>
+			
+        <jar destfile="bin/${jar.name}">
+            <manifest>
+                <attribute name="Main-Class" value="com.ubone.batch.core.Starter"/>
+                <attribute name="Class-Path" value=". ${lib-file}" />
+            </manifest>
+            <fileset dir="${build.dir}/classes"/>
+        </jar>
+	</target>
+	
+	<!-- 6. tar 파일을 생성 -->
+	<target name="create_tar">
+
+		<echo>init ${target.dir}</echo>
+		<delete dir="${target.dir}" failonerror="false" />
+		<mkdir dir="${target.dir}"/>
+		<mkdir dir="${target.dir}/logs"/>
+
+		<echo>delete ${tar.name} file</echo>
+		<delete dir="${tar.name}" failonerror="false" />
+		
+		<!-- copy bin, lib folder -->
+		<copy todir="${target.dir}">
+			<fileset dir="${basedir}">
+				<include name="bin/**/*.*"/>
+				<include name="lib/**/*.*"/>
+			</fileset>
+		</copy>
+		
+		<!-- tar include bin, lib -->
+		<tar destfile="${tar.name}">
+           <fileset dir="${target.dir}"/>
+       </tar>		
+	</target>
+
+	<!-- 7.After-Clean -->
+	<target name="after-clean">
+		<echo>cleanning ...</echo>
+		<delete dir="${build.dir}/classes" failonerror="false" />
+	</target>
+	
+<!--	<target name="build" depends="clean, compile, copy_config, create_jar, create_tar, clean"/> -->
+	<target name="build" depends="clean, compile, copy_config, create_jar, after-clean"/>
+</project>

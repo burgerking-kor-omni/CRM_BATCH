@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AnalyticMStampJob">
+	
+	<!--
+		QueryId     : AnalyticMStampJob.selectMShipStampPeriod
+		Description : 기존 데이터 존재여부 확인
+	 -->
+	<select id="selectMShipStampPeriod" parameterType="map" resultType="lmap">
+		SELECT YYYY
+		     , MM
+		     , CD_GRADE
+		  FROM CRMADMIN.ANA_MSHIP_STAMP_PERIOD
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND CD_GRADE = #{CD_GRADE}
+	</select>
+	
+	<!--
+		QueryId     : AnalyticMStampJob.insertMShipStampPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<insert id="insertMShipStampPeriod" parameterType="map">
+		INSERT INTO CRMADMIN.ANA_MSHIP_STAMP_PERIOD
+		(
+			   YYYY                /* 년 */
+			 , MM                  /* 월 */
+			 , CD_GRADE            /* 등급코드 */
+		<if test="CNT_SAVE_STAMP != null and CNT_SAVE_STAMP != ''">
+			 , CNT_SAVE_STAMP            /* 가입 회원수 */
+		</if>
+		) VALUES (
+		       #{YYYY}
+			 , #{MM}
+			 , #{CD_GRADE}
+		<if test="CNT_SAVE_STAMP != null and CNT_SAVE_STAMP != ''">
+			 , TO_NUMBER(#{CNT_SAVE_STAMP})
+		</if>
+		)
+	</insert>
+	
+	<!--
+		QueryId     : AnalyticMStampJob.updateMShipStampPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<update id="updateMShipStampPeriod" parameterType="map">
+		UPDATE CRMADMIN.ANA_MSHIP_STAMP_PERIOD
+		   SET YYYY = #{YYYY}
+		<if test="CNT_SAVE_STAMP != null and CNT_SAVE_STAMP != ''">
+			 , CNT_SAVE_STAMP = TO_NUMBER(#{CNT_SAVE_STAMP})
+		</if>
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND CD_GRADE = #{CD_GRADE}
+
+	</update>
+	
+	<!--
+		QueryId     : AnalyticMStampJob.selectMShipStamp
+		Description : 멤버십 스탬프 데이터 적재용 데이터 조회
+	 -->
+	<select id="selectMShipStamp" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.CD_GRADE
+		     , SUM(A.CNT_STAMP_INCRE_PLUS) - SUM(A.CNT_STAMP_INCRE_MINUS) AS CNT_SAVE_STAMP
+		  FROM (SELECT TO_CHAR(B.DT_REG, 'YYYY') AS YYYY
+		             , TO_CHAR(B.DT_REG, 'MM') AS MM
+		             , NVL(A.CD_GRADE, '99') AS CD_GRADE
+		             , DECODE(B.CD_INCREMENT, '01', B.CNT_STAMP_INCRE, 0) AS CNT_STAMP_INCRE_PLUS
+		             , DECODE(B.CD_INCREMENT, '02', B.CNT_STAMP_INCRE, 0) AS CNT_STAMP_INCRE_MINUS
+		          FROM CRMADMIN.TBS_MEMBER A
+		         INNER JOIN CRMADMIN.TBS_MEMBER_STAMP_RECORD B
+		            ON A.ID_MEMBER = B.ID_MEMBER
+		         WHERE B.DT_REG >= TO_DATE(TO_CHAR(SYSDATE-1, 'YYYY-MM') || '-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+		           AND B.DT_REG <![CDATA[<=]]> TO_DATE(TO_CHAR(LAST_DAY(SYSDATE-1), 'YYYY-MM-DD') || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		        ) A
+		 GROUP BY A.YYYY, A.MM, A.CD_GRADE
+	</select>
+	
+</mapper>

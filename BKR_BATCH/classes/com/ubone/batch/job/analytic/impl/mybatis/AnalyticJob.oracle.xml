@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AnalyticJob">
+	
+	<!--
+		QueryId     : AnalyticJob.selectMamberPeriod
+		Description : 기존 데이터 존재여부 확인
+	 -->
+	<select id="selectMamberPeriod" parameterType="map" resultType="lmap">
+		SELECT YYYY
+		     , MM
+		     , DD
+		     , CD_GENDER
+		     , CD_AGE
+		     , CD_GRADE
+		  FROM CRMADMIN.ANA_MEMBER_PERIOD
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND DD = #{DD}
+		   AND CD_GENDER = #{CD_GENDER}
+		   AND CD_AGE = #{CD_AGE}
+		   AND CD_GRADE = #{CD_GRADE}
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.insertMemberPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<insert id="insertMemberPeriod" parameterType="map">
+		INSERT INTO CRMADMIN.ANA_MEMBER_PERIOD
+		(
+			   YYYY                /* 년 */
+			 , MM                  /* 월 */
+			 , DD                  /* 일 */
+			 , CD_GENDER           /* 성별 */
+			 , CD_AGE              /* 연령대 */
+			 , CD_GRADE            /* 등급코드 */
+		<if test="CNT_JOIN != null and CNT_JOIN != ''">
+			 , CNT_JOIN            /* 가입 회원수 */
+		</if>
+		<if test="CNT_DORMANCY != null and CNT_DORMANCY != ''">
+			 , CNT_DORMANCY        /* 휴면 회원수 */
+		</if>
+		<if test="CNT_DEL != null and CNT_DEL != ''">
+			 , CNT_DEL             /* 탈퇴 회원수 */
+		</if>
+		<if test="CNT_LOGIN != null and CNT_LOGIN != ''">
+			 , CNT_LOGIN           /* 로그인 회원수 */
+		</if>
+		<if test="CNT_BUY != null and CNT_BUY != ''">
+			 , CNT_BUY             /* 구매 회원수 */
+		</if>
+		<if test="CNT_COUPON != null and CNT_COUPON != ''">
+			 , CNT_COUPON          /* 쿠폰사용 회원수 */
+		</if>
+		<if test="CNT_REWARD != null and CNT_REWARD != ''">
+			 , CNT_REWARD          /* 멥버십 리워드 회원수 */
+		</if>
+		<if test="CNT_REWARD_COUPON != null and CNT_REWARD_COUPON != ''">
+			 , CNT_REWARD_COUPON   /* 누적 멤버십 리워드 쿠폰수 */
+		</if>
+		<if test="CNT_CHNN_BKR != null and CNT_CHNN_BKR != ''">
+			 , CNT_CHNN_BKR        /* 가입채널(BKR) */
+		</if>
+		<if test="CNT_CHNN_NAVER != null and CNT_CHNN_NAVER != ''">
+			 , CNT_CHNN_NAVER      /* 가입채널(네이버) */
+		</if>
+		<if test="CNT_CHNN_KAKAO != null and CNT_CHNN_KAKAO != ''">
+			 , CNT_CHNN_KAKAO      /* 가입채널(카카오톡) */
+		</if>
+		<if test="CNT_CHNN_SAMSUNG != null and CNT_CHNN_SAMSUNG != ''">
+			 , CNT_CHNN_SAMSUNG    /* 가입채널(삼성앱카드) */
+		</if>
+		) VALUES (
+		       #{YYYY}
+			 , #{MM}
+			 , #{DD}
+			 , #{CD_GENDER}
+			 , #{CD_AGE}
+			 , #{CD_GRADE}
+		<if test="CNT_JOIN != null and CNT_JOIN != ''">
+			 , TO_NUMBER(#{CNT_JOIN})
+		</if>
+		<if test="CNT_DORMANCY != null and CNT_DORMANCY != ''">
+			 , TO_NUMBER(#{CNT_DORMANCY})
+		</if>
+		<if test="CNT_DEL != null and CNT_DEL != ''">
+			 , TO_NUMBER(#{CNT_DEL})
+		</if>
+		<if test="CNT_LOGIN != null and CNT_LOGIN != ''">
+			 , TO_NUMBER(#{CNT_LOGIN})
+		</if>
+		<if test="CNT_BUY != null and CNT_BUY != ''">
+			 , TO_NUMBER(#{CNT_BUY})
+		</if>
+		<if test="CNT_COUPON != null and CNT_COUPON != ''">
+			 , TO_NUMBER(#{CNT_COUPON})
+		</if>
+		<if test="CNT_REWARD != null and CNT_REWARD != ''">
+			 , TO_NUMBER(#{CNT_REWARD})
+		</if>
+		<if test="CNT_REWARD_COUPON != null and CNT_REWARD_COUPON != ''">
+			 , TO_NUMBER(#{CNT_REWARD_COUPON})
+		</if>
+		<if test="CNT_CHNN_BKR != null and CNT_CHNN_BKR != ''">
+			 , TO_NUMBER(#{CNT_CHNN_BKR})
+		</if>
+		<if test="CNT_CHNN_NAVER != null and CNT_CHNN_NAVER != ''">
+			 , TO_NUMBER(#{CNT_CHNN_NAVER})
+		</if>
+		<if test="CNT_CHNN_KAKAO != null and CNT_CHNN_KAKAO != ''">
+			 , TO_NUMBER(#{CNT_CHNN_KAKAO})
+		</if>
+		<if test="CNT_CHNN_SAMSUNG != null and CNT_CHNN_SAMSUNG != ''">
+			 , TO_NUMBER(#{CNT_CHNN_SAMSUNG})
+		</if>
+		)
+	</insert>
+	
+	<!--
+		QueryId     : AnalyticJob.updateMemberPeriod
+		Description : 통계 데이터 적재
+	 -->
+	<update id="updateMemberPeriod" parameterType="map">
+		UPDATE CRMADMIN.ANA_MEMBER_PERIOD
+		   SET YYYY = #{YYYY}
+		<if test="CNT_JOIN != null and CNT_JOIN != ''">
+			 , CNT_JOIN = TO_NUMBER(#{CNT_JOIN})
+		</if>
+		<if test="CNT_DORMANCY != null and CNT_DORMANCY != ''">
+			 , CNT_DORMANCY = TO_NUMBER(#{CNT_DORMANCY})
+		</if>
+		<if test="CNT_DEL != null and CNT_DEL != ''">
+			 , CNT_DEL = TO_NUMBER(#{CNT_DEL})
+		</if>
+		<if test="CNT_LOGIN != null and CNT_LOGIN != ''">
+			 , CNT_LOGIN = TO_NUMBER(#{CNT_LOGIN})
+		</if>
+		<if test="CNT_BUY != null and CNT_BUY != ''">
+			 , CNT_BUY = TO_NUMBER(#{CNT_BUY})
+		</if>
+		<if test="CNT_COUPON != null and CNT_COUPON != ''">
+			 , CNT_COUPON = TO_NUMBER(#{CNT_COUPON})
+		</if>
+		<if test="CNT_REWARD != null and CNT_REWARD != ''">
+			 , CNT_REWARD = TO_NUMBER(#{CNT_REWARD})
+		</if>
+		<if test="CNT_REWARD_COUPON != null and CNT_REWARD_COUPON != ''">
+			 , CNT_REWARD_COUPON = TO_NUMBER(#{CNT_REWARD_COUPON})
+		</if>
+		<if test="CNT_CHNN_BKR != null and CNT_CHNN_BKR != ''">
+			 , CNT_CHNN_BKR = TO_NUMBER(#{CNT_CHNN_BKR})
+		</if>
+		<if test="CNT_CHNN_NAVER != null and CNT_CHNN_NAVER != ''">
+			 , CNT_CHNN_NAVER = TO_NUMBER(#{CNT_CHNN_NAVER})
+		</if>
+		<if test="CNT_CHNN_KAKAO != null and CNT_CHNN_KAKAO != ''">
+			 , CNT_CHNN_KAKAO = TO_NUMBER(#{CNT_CHNN_KAKAO})
+		</if>
+		<if test="CNT_CHNN_SAMSUNG != null and CNT_CHNN_SAMSUNG != ''">
+			 , CNT_CHNN_SAMSUNG = TO_NUMBER(#{CNT_CHNN_SAMSUNG})
+		</if>
+		 WHERE YYYY = #{YYYY}
+		   AND MM = #{MM}
+		   AND DD = #{DD}
+		   AND CD_GENDER = #{CD_GENDER}
+		   AND CD_AGE = #{CD_AGE}
+		   AND CD_GRADE = #{CD_GRADE}
+
+	</update>
+	
+	<!--
+		QueryId     : AnalyticJob.selectJoinMamber
+		Description : 가입회원 데이터 적재용 데이터 조회
+	 -->
+	<select id="selectJoinMamber" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.DD
+		     , A.CD_GENDER
+		     , A.CD_AGE
+		     , A.CD_GRADE
+		     , COUNT(*) AS CNT_JOIN
+		  FROM (SELECT TO_CHAR(DT_JOIN, 'YYYY') AS YYYY
+		             , TO_CHAR(DT_JOIN, 'MM') AS MM
+		             , TO_CHAR(DT_JOIN, 'DD') AS DD
+		             , NVL(CD_GENDER, 'N') AS CD_GENDER
+		             , NVL(CD_AGE, '99') AS CD_AGE
+		             , NVL(CD_GRADE, '99') AS CD_GRADE
+		             , DECODE(NVL(CD_JOIN_SITE, '99'), '01', 1, 0) AS CNT_CHNN_BKR
+		             , DECODE(NVL(CD_JOIN_SITE, '99'), '02', 1, 0) AS CNT_CHNN_NAVER
+		             , DECODE(NVL(CD_JOIN_SITE, '99'), '03', 1, 0) AS CNT_CHNN_SAMSUNG
+		             , DECODE(NVL(CD_JOIN_SITE, '99'), '04', 1, 0) AS CNT_CHNN_KAKAO
+		          FROM CRMADMIN.TBS_MEMBER
+		         WHERE DT_JOIN >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+		           AND DT_JOIN <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		        ) A
+		 GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE, A.CD_GRADE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.selectChnnMamber
+		Description : 가입채널 데이터 적재용 데이터 조회
+	 -->
+	<select id="selectChnnMamber" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+             , A.DD
+             , A.CD_GENDER
+             , A.CD_AGE
+             , A.CD_GRADE
+             , SUM(CNT_CHNN_BKR) AS CNT_CHNN_BKR
+             , SUM(CNT_CHNN_NAVER) AS CNT_CHNN_NAVER
+             , SUM(CNT_CHNN_KAKAO) AS CNT_CHNN_KAKAO
+             , SUM(CNT_CHNN_SAMSUNG) AS CNT_CHNN_SAMSUNG
+          FROM (SELECT TO_CHAR(DT_JOIN, 'YYYY') AS YYYY
+                     , TO_CHAR(DT_JOIN, 'MM') AS MM
+                     , TO_CHAR(DT_JOIN, 'DD') AS DD
+                     , NVL(CD_GENDER, 'N') AS CD_GENDER
+                     , NVL(CD_AGE, '99') AS CD_AGE
+                     , NVL(CD_GRADE, '99') AS CD_GRADE
+                     , DECODE(NVL(CD_JOIN_SITE, '99'), '01', 1, 0) AS CNT_CHNN_BKR
+                     , DECODE(NVL(CD_JOIN_SITE, '99'), '02', 1, 0) AS CNT_CHNN_NAVER
+                     , DECODE(NVL(CD_JOIN_SITE, '99'), '03', 1, 0) AS CNT_CHNN_SAMSUNG
+                     , DECODE(NVL(CD_JOIN_SITE, '99'), '04', 1, 0) AS CNT_CHNN_KAKAO
+                  FROM CRMADMIN.TBS_MEMBER
+                 WHERE DT_JOIN >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+                   AND DT_JOIN <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+                ) A
+         GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE, A.CD_GRADE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.selectDormancyMamber
+		Description : 휴면 데이터 적재용 데이터 조회
+	 -->
+	<select id="selectDormancyMamber" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+             , A.MM
+             , A.DD
+             , A.CD_GENDER
+             , A.CD_AGE
+             , A.CD_GRADE
+             , SUM(CNT_DORMANCY) AS CNT_DORMANCY
+          FROM (SELECT TO_CHAR(DT_DORMANCY, 'YYYY') AS YYYY
+                     , TO_CHAR(DT_DORMANCY, 'MM') AS MM
+                     , TO_CHAR(DT_DORMANCY, 'DD') AS DD
+                     , NVL(CD_GENDER, 'N') AS CD_GENDER
+                     , NVL(CD_AGE, '99') AS CD_AGE
+                     , NVL(CD_GRADE, '99') AS CD_GRADE
+                     , DECODE(NVL(CD_STATUS, 'N'), 'H', 1, 0) AS CNT_DORMANCY
+                  FROM CRMADMIN.TBS_MEMBER
+                 WHERE DT_DORMANCY >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+                   AND DT_DORMANCY <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+                ) A
+         GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE, A.CD_GRADE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.selectDelMamber
+		Description : 탈퇴 데이터 적재용 데이터 조회
+	 -->
+	<select id="selectDelMamber" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+             , A.MM
+             , A.DD
+             , A.CD_GENDER
+             , A.CD_AGE
+             , A.CD_GRADE
+             , COUNT(*) AS CNT_DEL
+         FROM (SELECT TO_CHAR(DT_DEL, 'YYYY') AS YYYY
+                    , TO_CHAR(DT_DEL, 'MM') AS MM
+                    , TO_CHAR(DT_DEL, 'DD') AS DD
+                    , NVL(CD_GENDER, 'N') AS CD_GENDER
+                    , NVL(CD_AGE, '99') AS CD_AGE
+                    , NVL(CD_GRADE, '99') AS CD_GRADE
+                 FROM CRMADMIN.TBS_MEMBER_DEL
+                WHERE DT_DEL >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+                  AND DT_DEL <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+               ) A
+         GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE, A.CD_GRADE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.selectLoginMamber
+		Description : 로그인 데이터 적재용 데이터 조회
+	 -->
+	<select id="selectLoginMamber" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+             , A.MM
+             , A.DD
+             , A.CD_GENDER
+             , A.CD_AGE
+             , A.CD_GRADE
+             , COUNT(*) AS CNT_LOGIN
+          FROM (SELECT TO_CHAR(DT_LAST_LOGIN, 'YYYY') AS YYYY
+                     , TO_CHAR(DT_LAST_LOGIN, 'MM') AS MM
+                     , TO_CHAR(DT_LAST_LOGIN, 'DD') AS DD
+                     , NVL(CD_GENDER, 'N') AS CD_GENDER
+                     , NVL(CD_AGE, '99') AS CD_AGE
+                     , NVL(CD_GRADE, '99') AS CD_GRADE
+                  FROM CRMADMIN.TBS_MEMBER
+                 WHERE DT_LAST_LOGIN >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+                   AND DT_LAST_LOGIN <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+                ) A
+         GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE, A.CD_GRADE
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.selectRewardMamber
+		Description : 멥버십 리워드  데이터 조회
+	 -->
+	<select id="selectRewardMamber" parameterType="map" resultType="lmap">
+		SELECT TS.YYYY
+		     , TS.MM
+		     , TS.DD
+		     , NVL(CD_GENDER, 'N') AS CD_GENDER
+		     , NVL(CD_AGE, '99') AS CD_AGE
+		     , NVL(CD_GRADE, '99') AS CD_GRADE
+		     , COUNT(*) AS CNT_REWARD
+		  FROM CRMADMIN.TBS_MEMBER TM
+		 INNER JOIN (SELECT A.YYYY
+		                  , A.MM
+		                  , A.DD
+		                  , A.ID_MEMBER
+		               FROM (SELECT ID_MEMBER
+		                          , TO_CHAR(DT_STAMP_ISSUE, 'YYYY') AS YYYY
+		                          , TO_CHAR(DT_STAMP_ISSUE, 'MM') AS MM
+		                          , TO_CHAR(DT_STAMP_ISSUE, 'DD') AS DD
+		                       FROM CRMADMIN.TBS_MEMBER_STAMP_REWARD
+		                      WHERE FG_ISSUE = 'Y'
+		                        AND DT_STAMP_ISSUE >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+		                        AND DT_STAMP_ISSUE <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		                     ) A
+		               GROUP BY A.YYYY, A.MM, A.DD, A.ID_MEMBER) TS
+		    ON TM.ID_MEMBER = TS.ID_MEMBER
+		 GROUP BY TS.YYYY, TS.MM, TS.DD, NVL(CD_GENDER, 'N'), NVL(CD_AGE, '99'), NVL(CD_GRADE, '99')
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.selectRewardCoupon
+		Description : 누적 멤버십 리워드 쿠폰수  데이터 조회
+	 -->
+	<select id="selectRewardCoupon" parameterType="map" resultType="lmap">
+		SELECT TS.YYYY
+		     , TS.MM
+		     , TS.DD
+		     , NVL(CD_GENDER, 'N') AS CD_GENDER
+		     , NVL(CD_AGE, '99') AS CD_AGE
+		     , NVL(CD_GRADE, '99') AS CD_GRADE
+		     , TS.CNT_REWARD_COUPON AS CNT_REWARD_COUPON
+		  FROM CRMADMIN.TBS_MEMBER TM
+		 INNER JOIN (SELECT A.YYYY
+		                  , A.MM
+		                  , A.DD
+		                  , A.ID_MEMBER
+		                  , COUNT(*) AS CNT_REWARD_COUPON
+		               FROM (SELECT ID_MEMBER
+		                          , TO_CHAR(DT_STAMP_ISSUE, 'YYYY') AS YYYY
+		                          , TO_CHAR(DT_STAMP_ISSUE, 'MM') AS MM
+		                          , TO_CHAR(DT_STAMP_ISSUE, 'DD') AS DD
+		                       FROM CRMADMIN.TBS_MEMBER_STAMP_REWARD
+		                      WHERE FG_ISSUE = 'Y'
+		                        AND DT_STAMP_ISSUE >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+		                        AND DT_STAMP_ISSUE <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		                     ) A
+		               GROUP BY A.YYYY, A.MM, A.DD, A.ID_MEMBER) TS
+		    ON TM.ID_MEMBER = TS.ID_MEMBER
+	</select>
+	
+	<!--
+		QueryId     : AnalyticJob.insertOmniOrder
+		Description : 주문 테이블 데이터 저장
+	 -->
+	<insert id="insertOmniOrder" parameterType="map">
+		INSERT INTO CRMADMIN.OMNI_ORDER_STATIC 
+		SELECT A.ID_MEMBER
+		     , B.YYYY
+		     , B.MM
+		     , B.DD
+		     , 1 AS CNT_BUY
+		     , CASE WHEN A.COUPON_PIN_CD IS NOT NULL THEN 1
+		            ELSE 0
+		        END CNT_COUPON
+		  FROM OMNI.OMNI_ORDER_MAIN A
+		 INNER JOIN (SELECT TO_CHAR(A.REG_DATE, 'YYYY') AS YYYY
+		                  , TO_CHAR(A.REG_DATE, 'MM') AS MM
+		                  , TO_CHAR(A.REG_DATE, 'DD') AS DD
+		                  , A.ORDER_NO
+		                  , A.STOR_CD
+		               FROM OMNI.OMNI_ORDER_STATUS A
+		              INNER JOIN (SELECT ORDER_NO
+		                               , STOR_CD
+		                               , MAX(SEQ) AS SEQ
+		                            FROM OMNI.OMNI_ORDER_STATUS
+		                           WHERE REG_DATE >= TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 000000', 'YYYY-MM-DD HH24MISS')
+		                             AND REG_DATE <![CDATA[<=]]> TO_DATE(TO_CHAR((SYSDATE - 1), 'YYYY-MM-DD') || ' 235959', 'YYYY-MM-DD HH24MISS')
+		                           GROUP BY ORDER_NO, STOR_CD
+		                          ) B
+		                 ON A.ORDER_NO = B.ORDER_NO
+		                AND A.STOR_CD = B.STOR_CD
+		                AND A.SEQ = B.SEQ
+		              WHERE A.ORDER_STATUS = '04'
+		             ) B
+		    ON A.ORDER_NO = B.ORDER_NO
+		   AND A.STOR_CD = B.STOR_CD
+		 WHERE A.ID_MEMBER IS NOT NULL
+	</insert>
+	
+	<!--
+		QueryId     : AnalyticJob.selectOrder
+		Description : 구매관련 데이터 적재
+	 -->
+	<select id="selectOrder" parameterType="map" resultType="lmap">
+		SELECT A.YYYY
+		     , A.MM
+		     , A.DD
+		     , A.CD_GENDER
+		     , A.CD_AGE
+		     , A.CD_GRADE
+		     , SUM(A.CNT_BUY) AS CNT_BUY
+		     , SUM(A.CNT_COUPON) AS CNT_COUPON
+		  FROM (SELECT B.YYYY
+		             , B.MM
+		             , B.DD
+		             , NVL(A.CD_GENDER, 'N') AS CD_GENDER
+		             , NVL(A.CD_AGE, '99') AS CD_AGE
+		             , NVL(A.CD_GRADE, '99') AS CD_GRADE
+		             , A.ID_MEMBER
+		             , B.CNT_BUY
+		             , B.CNT_COUPON
+		          FROM CRMADMIN.TBS_MEMBER A
+		         INNER JOIN CRMADMIN.OMNI_ORDER_STATIC B
+		            ON A.ID_MEMBER = B.ID_MEMBER
+		         WHERE B.YYYY = TO_CHAR((SYSDATE - 1), 'YYYY')
+		           AND B.MM = TO_CHAR((SYSDATE - 1), 'MM')
+		           AND B.DD = TO_CHAR((SYSDATE - 1), 'DD')
+		        ) A
+		 GROUP BY A.YYYY, A.MM, A.DD, A.CD_GENDER, A.CD_AGE, A.CD_GRADE
+	</select>
+
+</mapper>

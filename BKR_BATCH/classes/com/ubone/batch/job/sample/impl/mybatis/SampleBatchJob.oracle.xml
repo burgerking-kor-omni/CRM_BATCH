@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="euc-kr" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SampleBatchJob">
+	
+	<!--
+		QueryId     : SampleBatchJob.getList
+		Description : 샘플 리스트
+	 -->
+	<select id="getList" parameterType="map" resultType="lmap">
+		SELECT * FROM TABS
+	</select>
+	
+	<!--
+		QueryId     : BasicInfo.deleteCompanyInfo
+		Description : [기본정보] 회사정보를 등록하는 쿼리
+	 -->
+	<delete id="deleteCompanyInfo">
+	DELETE FROM TBS_COMPANY
+	</delete>
+		
+	<!--
+		QueryId     : BasicInfo.insertCompanyInfo
+		Description : [기본정보] 회사정보를 등록하는 쿼리
+	 -->
+	<insert id="insertCompanyInfo">
+	INSERT INTO TBS_COMPANY	(
+		           CD_COMPANY
+                 , NM_COMPANY
+                 , NO_MANAGE
+                 , DT_REG
+                 , ID_REG_DEPT
+                 , ID_REG_EMP
+                 , DT_UPT
+                 , ID_UPT_DEPT
+                 , ID_UPT_EMP
+	) VALUES (
+	               #{cocd}
+	             , #{conm}
+	             , #{cono}
+	             , SYSDATE
+	             , NULL
+	             , NULL
+	             , SYSDATE
+	             , NULL
+	             , NULL
+    )
+	</insert>	
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src.resource"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-net-1.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/mail-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/crontab-parser-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/hessian-4.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/backport-util-concurrent-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/spring-aop-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-beans-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-context-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-core-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-tx-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-expression-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/spring-jdbc-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-dao-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/mybatis-3.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/mybatis-spring-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/aspectjrt-1.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/aspectjweaver-1.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-adaptor-spring-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-aspects-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-cache-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-data-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-util-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-web-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/ub-interfaces-1.5.4.jar"/>
+	<classpathentry kind="lib" path="lib/ub-meta-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/ub-ui-1.5.3.jar"/>
+	<classpathentry kind="lib" path="lib/xstream-1.4.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-dbcp-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-pool-1.5.7.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="lib/ub-batch-core-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/ub-framework-security-1.5.9.jar"/>
+	<classpathentry kind="lib" path="lib/spring-context-support-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>
