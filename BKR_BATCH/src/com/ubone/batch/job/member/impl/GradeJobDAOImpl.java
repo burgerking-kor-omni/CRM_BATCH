@@ -50,6 +50,16 @@ public class GradeJobDAOImpl extends UbSqlSessionDaoSupport implements GradeJobD
 	}
 	
 	@Override
+	public DataList selectAfterStamp(Parameter parameter) {
+		return queryForDataList(this.queryPrefix + "selectAfterStamp", parameter);
+	}
+	
+	@Override
+	public DataList selectChkGrade(Parameter parameter) {
+		return queryForDataList(this.queryPrefix + "selectChkGrade", parameter);
+	}
+	
+	@Override
 	public int updateMemberGrade(Parameter parameter) {
 		return update(this.queryPrefix + "updateMemberGrade", parameter);
 	}

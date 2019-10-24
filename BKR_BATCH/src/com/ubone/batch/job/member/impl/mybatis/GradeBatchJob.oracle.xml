@@ -65,6 +65,8 @@
 	<select id="selectGradeDownTarget" parameterType="map" resultType="lmap">
 		SELECT ID_MEMBER
 		     , NM_MEMBER
+		     , CD_GRADE
+		     , TO_CHAR(DT_CHNG_GRADE, 'YYYYMMDD') AS DT_CHNG_GRADE
 		     , CASE WHEN CD_GRADE = '01' THEN '01'
 		            WHEN CD_GRADE = '02' THEN '01'
 		            WHEN CD_GRADE = '03' THEN '02'
@@ -72,6 +74,32 @@
 		    END CD_GRADE_CHNG
 		  FROM CRMADMIN.TBS_MEMBER TM
 		 WHERE TO_CHAR(SYSDATE, 'YYYYMMDD') = TO_CHAR(ADD_MONTHS(DT_CHNG_GRADE, TO_NUMBER(#{CD_DOWN_STAD})), 'YYYYMMDD')
+		   AND CD_GRADE <![CDATA[<>]]> '01'
+
+	</select>
+	
+	<!--
+		QueryId     : GradeUpJob.selectAfterStamp
+		Description : 등급조정이후 적립 스템프 갯수
+	 -->
+	<select id="selectAfterStamp" parameterType="map" resultType="lmap">
+		SELECT SUM(CNT_STAMP_INCRE) AS CNT_STAMP_INCRE
+		  FROM CRMADMIN.TBS_MEMBER_STAMP_RECORD    
+		 WHERE DT_REG >= TO_DATE(#{DT_CHNG_GRADE} || '000000', 'YYYYMMDDHH24MISS')   
+		   AND ID_MEMBER = #{ID_MEMBER}
+
+	</select>
+	
+	<!--
+		QueryId     : GradeUpJob.selectChkGrade
+		Description : 등급조정대상 여부 확인
+	 -->
+	<select id="selectChkGrade" parameterType="map" resultType="lmap">
+		SELECT CASE WHEN CNT_MIN_STAMP <![CDATA[<=]]> TO_NUMBER(#{CNT_STAMP_INCRE}) THEN 'Y'
+		            ELSE 'N'
+		        END FLAG_YN
+		  FROM CRMADMIN.TBS_GRADE
+		 WHERE CD_GRADE = #{CD_GRADE}
 
 	</select>
 	

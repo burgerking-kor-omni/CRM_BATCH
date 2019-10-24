@@ -109,7 +109,7 @@
 		     , COOPER_ORDER     /* 제휴처 주문번호 */
 		     , DAUPIN_STATUS    /* 상태(01:발행 신청,02:발행중,99:완료) */
 		  FROM CRMADMIN.TBS_DAUPIN_REQ
-		 WHERE DAUPIN_STATUS = '01'
+		 WHERE DAUPIN_STATUS = #{DAUPIN_STATUS}
 
 	</select>
 	

@@ -98,12 +98,40 @@ public class GradeJobSO {
 			
 			if (0 < dtDownTarget.getRowCount()) {
 				for (int i=0; i<dtDownTarget.getRowCount(); i++) {
-					Parameter changParam = DataUtil.makeParameter();
-					changParam.setParameter("ID_MEMBER", dtDownTarget.getString(i, "ID_MEMBER"));	// 회원PK
-					changParam.setParameter("TP_GRADE", "D");										// 등급구분
-					changParam.setParameter("CD_GRADE", dtDownTarget.getString(i, "CD_GRADE_CHNG"));// 하향등급
-					gradeJobDAO.updateMemberGrade(changParam);
-					updateCnt++;
+					// 3. 등급변경일로 부터 적립된 스탬프 갯수에 따른 맴버십 등급 조정
+					Parameter afterParam = DataUtil.makeParameter();
+					afterParam.setParameter("ID_MEMBER", dtDownTarget.getString(i, "ID_MEMBER"));
+					afterParam.setParameter("DT_CHNG_GRADE", dtDownTarget.getString(i, "DT_CHNG_GRADE"));
+					DataList dtAfter = gradeJobDAO.selectAfterStamp(afterParam);
+					
+					
+					// 4. 이후 적립이력이 있을때 등급별 적립개수 확인
+					if (0 < dtAfter.getRowCount()) {						
+						Parameter chkParam = DataUtil.makeParameter();
+						chkParam.setParameter("CD_GRADE", dtDownTarget.getString(i, "CD_GRADE"));
+						chkParam.setParameter("CNT_STAMP_INCRE", dtAfter.getString(0, "CNT_STAMP_INCRE"));
+						DataList dtChk = gradeJobDAO.selectChkGrade(chkParam);
+						
+						// 5. 이후 적립개수가 해당 등급의 기준보다 작으면 등급 하향
+						if (0 < dtChk.getRowCount()) {
+							if ("N".equals(dtChk.getString(0, "FLAG_YN"))) {
+								Parameter changParam = DataUtil.makeParameter();
+								changParam.setParameter("ID_MEMBER", dtDownTarget.getString(i, "ID_MEMBER"));	// 회원PK
+								changParam.setParameter("TP_GRADE", "D");										// 등급구분
+								changParam.setParameter("CD_GRADE", dtDownTarget.getString(i, "CD_GRADE_CHNG"));// 하향등급
+								gradeJobDAO.updateMemberGrade(changParam);
+								updateCnt++;
+							}
+						}
+					} else {
+						// 6. 이후 적립이력이 없으면 등급하향
+						Parameter changParam = DataUtil.makeParameter();
+						changParam.setParameter("ID_MEMBER", dtDownTarget.getString(i, "ID_MEMBER"));	// 회원PK
+						changParam.setParameter("TP_GRADE", "D");										// 등급구분
+						changParam.setParameter("CD_GRADE", dtDownTarget.getString(i, "CD_GRADE_CHNG"));// 하향등급
+						gradeJobDAO.updateMemberGrade(changParam);
+						updateCnt++;
+					}
 				}
 			}
 		}

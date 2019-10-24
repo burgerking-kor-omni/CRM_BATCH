@@ -43,8 +43,8 @@
 	 -->
 	<entry key="batch.mail.host">smtp.office365.com</entry>	
 	<entry key="batch.mail.port">587</entry>	
-	<entry key="batch.mail.user.name">bkr-noreply@bkr.co.kr</entry>	
-	<entry key="batch.mail.password">123qwer@</entry>	
+	<entry key="batch.mail.user.name">bkr_noreply@bkr.co.kr</entry>	
+	<entry key="batch.mail.password">qjrjzld123!@#$</entry>
 	<entry key="batch.mail.default.encoding">UTF-8</entry>
 	
 	<!-- 

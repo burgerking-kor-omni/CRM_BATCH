@@ -104,7 +104,7 @@ public class DispatchJobSO {
 							}
 
 							mimeMailService.sendMail(
-									  new InternetAddress("bkr-noreply@bkr.co.kr", "비케이알")
+									  new InternetAddress("bkr_noreply@bkr.co.kr", "비케이알")
 									, InternetAddress.parse(toMail, false)
 									, dtDispatchList.getString(j, "DS_TITLE_DISPATCH")
 									, XssUtils.reconvertXss(dtDispatchList.getString(j, "DS_DISPATCH"))

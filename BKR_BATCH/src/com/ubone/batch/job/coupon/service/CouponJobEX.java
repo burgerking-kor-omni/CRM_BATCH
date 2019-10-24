@@ -203,74 +203,79 @@ public class CouponJobEX {
 	 * @return LO
 	 */
 	public DataList publishCouponAlways() {
-		Parameter parameter = DataUtil.makeParameter();
 		DataList dtReturn = DataUtil.makeDataList("getDauCouponInfo");
 		
-		// 1. 실시간 발행 요청 대상 조회
-		DataList dtData = couponJobDAO.selectDauPinReq(parameter);
+		// 1. 실시간 발행 요청 대상 조회 (발행신청)
+		Parameter firstParam = DataUtil.makeParameter();
+		firstParam.setParameter("DAUPIN_STATUS", "01");
+		DataList dtFirst = couponJobDAO.selectDauPinReq(firstParam);
 		
-		if (0 < dtData.getRowCount()) {
-			// 2. 실시간 발행 요청 대상 핀 발행
-			for (int i=0; i<dtData.getRowCount(); i++) {
-				// 2-1. 대상 상태 변경 - 발행중
-				Parameter dauReqParam = DataUtil.makeParameter();
-				dauReqParam.setParameter("NO_DAUPIN_REQ", dtData.getString(i, "NO_DAUPIN_REQ"));	// 다우핀 발행요청 PK
-				dauReqParam.setParameter("DAUPIN_STATUS", "02");	// 상태(01:발행 신청,02:발행중,99:완료)
-				couponJobDAO.updateDauReq(dauReqParam);
+		if (0 < dtFirst.getRowCount()) {
+			// 1-1. 대상 상태 변경 - 발행중 
+			for (int i=0; i<dtFirst.getRowCount(); i++) {
+				Parameter dauFirstParam = DataUtil.makeParameter();
+				dauFirstParam.setParameter("NO_DAUPIN_REQ", dtFirst.getString(i, "NO_DAUPIN_REQ"));	// 다우핀 발행요청 PK
+				dauFirstParam.setParameter("DAUPIN_STATUS", "02");	// 상태(01:발행 신청,02:발행중,99:완료)
+				couponJobDAO.updateDauReq(dauFirstParam);
+			}
+			
+			// 2. 실시간 발행 요청 대상 조회 (발행중)
+			Parameter secondParam = DataUtil.makeParameter();
+			secondParam.setParameter("DAUPIN_STATUS", "02");
+			DataList dtSecond = couponJobDAO.selectDauPinReq(secondParam);
+			
+			if (0 < dtSecond.getRowCount()) {
+				// 2-1. 실시간 발행 요청 대상 핀 발행
+				for (int i=0; i<dtSecond.getRowCount(); i++) {
 				
-				// 2-2. 핀발행
-				int cntPin = Integer.parseInt(dtData.getString(i, "CNT_PIN"));	// 발행 요청 핀수
-				
-				Parameter dauParam = DataUtil.makeParameter();
-				
-				// 서버 환경에 따른 값 분기 처리
-				if ("real".equals(ConfigHolder.APPLICATION_MODE)) {
-					dauParam.setParameter("DAU_DOMAIN", ConfigHolder.get("dau.real.domain"));
-					dauParam.setParameter("COOPER_ID", ConfigHolder.get("dau.real.cooper.id"));
-					dauParam.setParameter("COOPER_PW", ConfigHolder.get("dau.real.cooper.pw"));
-					dauParam.setParameter("SITE_ID", ConfigHolder.get("dau.real.site.id"));
-				} else {
-					dauParam.setParameter("DAU_DOMAIN", ConfigHolder.get("dau.dev.domain"));
-					dauParam.setParameter("COOPER_ID", ConfigHolder.get("dau.dev.cooper.id"));
-					dauParam.setParameter("COOPER_PW", ConfigHolder.get("dau.dev.cooper.pw"));
-					dauParam.setParameter("SITE_ID", ConfigHolder.get("dau.dev.site.id"));
+					// 2-2. 핀발행
+					int cntPin = Integer.parseInt(dtSecond.getString(i, "CNT_PIN"));	// 발행 요청 핀수
+					
+					Parameter dauParam = DataUtil.makeParameter();
+					
+					// 서버 환경에 따른 값 분기 처리
+					if ("real".equals(ConfigHolder.APPLICATION_MODE)) {
+						dauParam.setParameter("DAU_DOMAIN", ConfigHolder.get("dau.real.domain"));
+						dauParam.setParameter("COOPER_ID", ConfigHolder.get("dau.real.cooper.id"));
+						dauParam.setParameter("COOPER_PW", ConfigHolder.get("dau.real.cooper.pw"));
+						dauParam.setParameter("SITE_ID", ConfigHolder.get("dau.real.site.id"));
+					} else {
+						dauParam.setParameter("DAU_DOMAIN", ConfigHolder.get("dau.dev.domain"));
+						dauParam.setParameter("COOPER_ID", ConfigHolder.get("dau.dev.cooper.id"));
+						dauParam.setParameter("COOPER_PW", ConfigHolder.get("dau.dev.cooper.pw"));
+						dauParam.setParameter("SITE_ID", ConfigHolder.get("dau.dev.site.id"));
+					}
+					dauParam.setParameter("NO_REQ", dtSecond.getString(i, "NO_REQ"));
+					dauParam.setParameter("VALID_START", dtSecond.getString(i, "VALID_START").replace("-", ""));
+					dauParam.setParameter("VALID_END", dtSecond.getString(i, "VALID_END").replace("-", ""));
+					dauParam.setParameter("COOPER_ORDER", dtSecond.getString(i, "COOPER_ORDER"));
+					
+					for (int j=0; j<cntPin; j++) {
+						Document doc = getCouponPinXmlDocumentFromDoau(dauParam, "S");
+						NodeList nl = doc.getElementsByTagName("CPN_LIST");
+						Element docEle = doc.getDocumentElement();
+						String rt = docEle.getElementsByTagName("RT").item(0).getTextContent();
+	
+					    if (nl != null && nl.getLength() > 0 && "S000001".equals(rt)) {
+				            if (nl.item(0).getNodeType() == Node.ELEMENT_NODE) {
+				                Element el = (Element) nl.item(0);
+				                
+				                Parameter insertParam = DataUtil.makeParameter();
+				                insertParam.setParameter("CD_COUPON", dtSecond.getString(i, "CD_COUPON"));
+				                insertParam.setParameter("PIN_NUM", el.getElementsByTagName("NO_CPN").item(0).getTextContent());
+				                insertParam.setParameter("DT_EXPIRY_START", dtSecond.getString(i, "VALID_START"));
+				                insertParam.setParameter("DT_EXPIRY_END", dtSecond.getString(i, "VALID_END"));
+				                
+				                couponJobDAO.insertCouponPin(insertParam);
+				            }
+					    }
+					}
+					// 2-3. 대상 상태 변경 - 완료
+					Parameter dauSecondParam = DataUtil.makeParameter();
+					dauSecondParam.setParameter("NO_DAUPIN_REQ", dtSecond.getString(i, "NO_DAUPIN_REQ"));	// 다우핀 발행요청 PK
+					dauSecondParam.setParameter("DAUPIN_STATUS", "99");	// 상태(01:발행 신청,02:발행중,99:완료)
+					couponJobDAO.updateDauReq(dauSecondParam);
 				}
-				dauParam.setParameter("NO_REQ", dtData.getString(i, "NO_REQ"));
-				dauParam.setParameter("VALID_START", dtData.getString(i, "VALID_START").replace("-", ""));
-				dauParam.setParameter("VALID_END", dtData.getString(i, "VALID_END").replace("-", ""));
-				dauParam.setParameter("COOPER_ORDER", dtData.getString(i, "COOPER_ORDER"));
-				
-				for (int j=0; j<cntPin; j++) {
-					Document doc = getCouponPinXmlDocumentFromDoau(dauParam, "S");
-					NodeList nl = doc.getElementsByTagName("CPN_LIST");
-					Element docEle = doc.getDocumentElement();
-					String rt = docEle.getElementsByTagName("RT").item(0).getTextContent();
-
-				    if (nl != null && nl.getLength() > 0 && "S000001".equals(rt)) {
-			            if (nl.item(0).getNodeType() == Node.ELEMENT_NODE) {
-			                Element el = (Element) nl.item(0);
-			                
-			                Parameter insertParam = DataUtil.makeParameter();
-			                insertParam.setParameter("CD_COUPON", dtData.getString(i, "CD_COUPON"));
-			                insertParam.setParameter("PIN_NUM", el.getElementsByTagName("NO_CPN").item(0).getTextContent());
-			                insertParam.setParameter("DT_EXPIRY_START", dtData.getString(i, "VALID_START"));
-			                insertParam.setParameter("DT_EXPIRY_END", dtData.getString(i, "VALID_END"));
-			                
-			                couponJobDAO.insertCouponPin(insertParam);
-			                
-//			                Map<String, Object> data = new HashMap<String, Object>();
-//			                data.put("CD_COUPON", dtData.getString(i, "CD_COUPON"));
-//			                data.put("PIN_NUM", el.getElementsByTagName("NO_CPN").item(0).getTextContent());
-//			                data.put("DT_EXPIRY_START", dtData.getString(i, "VALID_START"));
-//			                data.put("DT_EXPIRY_END", dtData.getString(i, "VALID_END"));
-//			                
-//			                dtReturn.addRow(data);
-			            }
-				    }
-				}
-				// 2-3. 대상 상태 변경 - 완료
-				dauReqParam.setParameter("DAUPIN_STATUS", "99");	// 상태(01:발행 신청,02:발행중,99:완료)
-				couponJobDAO.updateDauReq(dauReqParam);
 			}
 			
 		}

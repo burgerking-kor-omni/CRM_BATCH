@@ -27,6 +27,10 @@ public interface GradeJobDAO {
 	
 	DataList selectGradeDownTarget(Parameter parameter);
 	
+	DataList selectAfterStamp(Parameter parameter);
+	
+	DataList selectChkGrade(Parameter parameter);
+	
 	int updateMemberGrade(Parameter parameter);
 	
 }
